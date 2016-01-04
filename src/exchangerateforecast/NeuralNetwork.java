@@ -8,6 +8,10 @@ package exchangerateforecast;
 
 import java.text.*;
 import java.util.*;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
 
 
 /**
@@ -19,7 +23,7 @@ public class NeuralNetwork {
         Locale.setDefault(Locale.ENGLISH); //??
     }
  
-    final boolean isTrained = false;
+    private boolean isTrained = false;
     final DecimalFormat df; //??
     final Random rand = new Random();
     final ArrayList<Neuron> inputLayer = new ArrayList<>();
@@ -35,19 +39,22 @@ public class NeuralNetwork {
     final double momentum = 0.7f; //??
  
     // Inputs for xor problem
-    final double inputs[][] = { { 1, 1 }, { 1, 0 }, { 0, 1 }, { 0, 0 } };
+    final List<Double> inputs;
  
     // Corresponding outputs, xor training data
-    final double expectedOutputs[][] = { { 0 }, { 1 }, { 1 }, { 0 } };
-    double resultOutputs[][] = { { -1 }, { -1 }, { -1 }, { -1 } }; // dummy init
+    final Double expectedOutputs[];
+    double resultOutputs[][] = { { -1 } }; // dummy init
     double output[];
  
     // for weight update all
     final HashMap<String, Double> weightUpdate = new HashMap<>(); //??
-
-    public NeuralNetwork(int input, int hidden, int output) {
+    
+    public NeuralNetwork(int input, int hidden, int output, boolean isTrained) {
         this.layers = new int[] { input, hidden, output };
+        this.isTrained = isTrained;
         df = new DecimalFormat("#.0#"); //??
+        inputs = new ArrayList<Double>();
+        expectedOutputs = new Double[output];
  
         /**
          * Create all neurons and connections Connections are created in the
@@ -120,9 +127,9 @@ public class NeuralNetwork {
      *            There is equally many neurons in the input layer as there are
      *            in input variables
      */
-    public void setInput(double inputs[]) {
+    public void setInput(List<Double> inputs) {
         for (int i = 0; i < inputLayer.size(); i++) {
-            inputLayer.get(i).setOutput(inputs[i]);
+            inputLayer.get(i).setOutput(inputs.get(i));
         }
     }
  
@@ -152,10 +159,10 @@ public class NeuralNetwork {
      *            respect to each of the weight leading into the output neurons
      *            bias is also updated here
      */
-    public void applyBackpropagation(double expectedOutput[]) {
+    public void applyBackpropagation(Double expectedOutput[]) {
  
         // error check, normalize value ]0;1[
-        for (int i = 0; i < expectedOutput.length; i++) {
+    /*    for (int i = 0; i < expectedOutput.length; i++) {
             double d = expectedOutput[i];
             if (d < 0 || d > 1) {
                 if (d < 0)
@@ -163,7 +170,7 @@ public class NeuralNetwork {
                 else
                     expectedOutput[i] = 1 - epsilon;
             }
-        }
+        }*/
  
         int i = 0;
         for (Neuron n : outputLayer) {
@@ -211,64 +218,124 @@ public class NeuralNetwork {
         }
     }
  
-    void run(int maxSteps, double minError) {
+    void run(int maxSteps, double minError, String fileName, JLabel testLabel) {
         int i;
         // Train neural network until minError reached or maxSteps exceeded
-        double error = 1;
+        double error = 101;
+        BufferedReader br = null;
+        
+        System.out.println("NN Foreign Exchange Rate Forecasting.");
+
         for (i = 0; i < maxSteps && error > minError; i++) {
-            error = 0;
-            for (int p = 0; p < inputs.length; p++) {
-                setInput(inputs[p]);
- 
-                activate();
- 
-                output = getOutput();
-                resultOutputs[p] = output;
- 
-                // calculate error for every run.
-                for (int j = 0; j < expectedOutputs[p].length; j++) {
-                    double err = Math.pow(output[j] - expectedOutputs[p][j], 2);
-                    error += err;
+            try {
+                File file = new File(fileName);
+                
+                br = new BufferedReader(new FileReader(file));
+                error = 0;
+                
+                String outputString = "";  
+                testLabel.setText((i/maxSteps) * 100 + "%");
+                for (int p = 0; readInputOutput(br); p++) {
+                    
+                    setInput(inputs);
+                    activate();
+                    
+                    output = getOutput();
+                    resultOutputs[0] = output;
+                    
+                    outputString += getOutputString()+"\n";
+                    
+                    // calculate error for every run.
+                    for (int j = 0; j < expectedOutputs.length; j++) {
+                        double err = Math.pow((output[j] * 100) - (expectedOutputs[j] * 100), 2);
+                        error += err;
+                    }
+                    
+                    
+                    applyBackpropagation(expectedOutputs);
                 }
                 
-                 
-                applyBackpropagation(expectedOutputs[p]);
+                if((i+1) == maxSteps || error <= minError){
+                    System.out.println(outputString);
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
- 
-        printResult();
          
         System.out.println("Sum of squared errors = " + error);
         System.out.println("##### EPOCH " + i+"\n");
-        if (i == maxSteps) {
-            System.out.println("!Error training try again");
-        } else {
+        
+      //  if (i == maxSteps) {
+        //    System.out.println("!Error training try again");
+        //} else {
             printAllWeights();
+            
             printWeightUpdate();
+    }
+    
+    
+    public Double testRun(List<Double> input){
+        setInput(input);
+        activate();
+        return (getOutput()[0] * 100);
+    }
+    
+    private boolean readInputOutput(BufferedReader br){
+        String line;
+       
+        
+        try {  
+            
+            if(inputs.size() ==0){               
+            
+                for (int i = 0; i < inputLayer.size(); i++){
+                    if((line = br.readLine()) != null) {
+                        // use comma as separator
+                        String[] cols = line.split(",");
+                        inputs.add(Double.parseDouble(cols[1])/100);
+                        //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
+                    } else{
+                        return false;                
+                    }                
+               }
+           
+            } else{
+                //shift every input to left and add previous expected output to last
+                //and read expected output from next row.
+                inputs.remove(0);
+                inputs.add(expectedOutputs[0]);                              
+            }
+            
+            if((line = br.readLine()) != null){
+                String[] cols = line.split(",");
+                expectedOutputs[0] = Double.parseDouble(cols[1])/100;                          
+            } else{
+                return false;
+            }    
+            
+        } catch (Exception ex) {
+            Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
+        
+        return true;       
     }
      
-    void printResult()
-    {
-        System.out.println("NN example with xor training");
-        for (int p = 0; p < inputs.length; p++) {
-            System.out.print("INPUTS: ");
-            for (int x = 0; x < layers[0]; x++) {
-                System.out.print(inputs[p][x] + " ");
-            }
- 
-            System.out.print("EXPECTED: ");
-            for (int x = 0; x < layers[2]; x++) {
-                System.out.print(expectedOutputs[p][x] + " ");
-            }
- 
-            System.out.print("ACTUAL: ");
-            for (int x = 0; x < layers[2]; x++) {
-                System.out.print(resultOutputs[p][x] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
+    private String getOutputString(){
+        
+        String outputStr = "EXPECTED: ";
+        outputStr += expectedOutputs[0] * 100 + " ";
+        outputStr += "ACTUAL: ";
+        outputStr += resultOutputs[0][0] * 100 + " ";
+              
+        return outputStr;
     }
  
     String weightKey(int neuronId, int conId) {
@@ -302,47 +369,78 @@ public class NeuralNetwork {
     // trained data
     void trainedWeights() {
         weightUpdate.clear();
-         
-        weightUpdate.put(weightKey(3, 0), 1.03);
-        weightUpdate.put(weightKey(3, 1), 1.13);
-        weightUpdate.put(weightKey(3, 2), -.97);
-        weightUpdate.put(weightKey(4, 3), 7.24);
-        weightUpdate.put(weightKey(4, 4), -3.71);
-        weightUpdate.put(weightKey(4, 5), -.51);
-        weightUpdate.put(weightKey(5, 6), -3.28);
-        weightUpdate.put(weightKey(5, 7), 7.29);
-        weightUpdate.put(weightKey(5, 8), -.05);
-        weightUpdate.put(weightKey(6, 9), 5.86);
-        weightUpdate.put(weightKey(6, 10), 6.03);
-        weightUpdate.put(weightKey(6, 11), .71);
-        weightUpdate.put(weightKey(7, 12), 2.19);
-        weightUpdate.put(weightKey(7, 13), -8.82);
-        weightUpdate.put(weightKey(7, 14), -8.84);
-        weightUpdate.put(weightKey(7, 15), 11.81);
-        weightUpdate.put(weightKey(7, 16), .44);
+        String line;
+        BufferedReader br = null;
+        Integer n, c;
+        Double w;
+        File file = new File("outputWeights.csv");
+        try {
+            
+             br = new BufferedReader(new FileReader(file));
+             //for removing the input,hidden,output neurons count.
+             br.readLine();
+             
+             while((line = br.readLine()) != null){
+               String[] cols = line.split(",");
+               n = Integer.parseInt(cols[0]);
+               c = Integer.parseInt(cols[1]);
+               w = Double.parseDouble(cols[2]);
+               
+               weightUpdate.put(weightKey(n, c), w);
+           } 
+            
+        } catch (Exception ex) {
+            Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            try {
+                br.close();
+            } catch (IOException ex) {
+                Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
  
-    public void printWeightUpdate() {
-        System.out.println("printWeightUpdate, put this i trainedWeights() and set isTrained to true");
-        // weights for the hidden layer
-        for (Neuron n : hiddenLayer) {
-            ArrayList<Connection> connections = n.getAllInConnections();
-            for (Connection con : connections) {
-                String w = df.format(con.getWeight());
-                System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
-                        + con.id + "), " + w + ");");
+    public void printWeightUpdate(){
+        
+        PrintWriter printWriter = null;
+        try {
+            File file = new File("outputWeights.csv");
+            file.createNewFile();
+            printWriter = new PrintWriter(file);
+            printWriter.write("" + layers[0] + "," + layers[1] + "," + layers[2] + "\n");             
+            
+            System.out.println("printWeightUpdate, put this i trainedWeights() and set isTrained to true");
+            // weights for the hidden layer
+            for (Neuron n : hiddenLayer) {
+                ArrayList<Connection> connections = n.getAllInConnections();
+                for (Connection con : connections) {
+                    String w = df.format(con.getWeight());
+                    printWriter.write(""+ n.id + "," + con.id + "," + w +"\n");
+                    printWriter.flush();
+                    System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
+                            + con.id + "), " + w + ");");
+                }
             }
-        }
-        // weights for the output layer
-        for (Neuron n : outputLayer) {
-            ArrayList<Connection> connections = n.getAllInConnections();
-            for (Connection con : connections) {
-                String w = df.format(con.getWeight());
-                System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
-                        + con.id + "), " + w + ");");
+            // weights for the output layer
+            for (Neuron n : outputLayer) {
+                ArrayList<Connection> connections = n.getAllInConnections();
+                for (Connection con : connections) {
+                    String w = df.format(con.getWeight());
+                    printWriter.write(""+ n.id + "," + con.id + "," + w +"\n");
+                    printWriter.flush();
+                    System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
+                            + con.id + "), " + w + ");");
+                }
             }
+            System.out.println();
+        } catch (IOException ex) {
+            Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            try{
+                printWriter.close();
+            }catch(Exception e){e.printStackTrace();}
         }
-        System.out.println();
+        
     }
  
     public void printAllWeights() {

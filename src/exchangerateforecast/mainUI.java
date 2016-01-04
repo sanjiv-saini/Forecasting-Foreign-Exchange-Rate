@@ -5,9 +5,15 @@
  */
 package exchangerateforecast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 
 /**
@@ -15,6 +21,11 @@ import javax.swing.JFileChooser;
  * @author sanju singh
  */
 public class mainUI extends javax.swing.JFrame {
+    
+    private List<Double> inputValues = new ArrayList<Double>() ;
+    private BufferedReader bufferedReader;
+    private int inputCnt, hiddenCnt, outputCnt;
+    private Double expectedOutput[] = new Double[5];
     
     class MyCustomFilter extends javax.swing.filechooser.FileFilter {
         @Override
@@ -51,6 +62,18 @@ public class mainUI extends javax.swing.JFrame {
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        inputField = new javax.swing.JTextField();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        ExpectedOutputField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        actualOutputField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        trainingDataPath = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
+        weightsLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -74,23 +97,129 @@ public class mainUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Submit");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Input:");
+
+        inputField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputFieldActionPerformed(evt);
+            }
+        });
+
+        jToggleButton1.setText("Browse");
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
+
+        ExpectedOutputField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExpectedOutputFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Expected Output:");
+
+        actualOutputField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actualOutputFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Actual Output:");
+
+        jButton2.setText("Read ");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Training Data:");
+
+        jButton5.setText("Read Weights");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(337, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(333, 333, 333))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(258, 258, 258)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(actualOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(55, 55, 55)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(trainingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(ExpectedOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(149, 149, 149)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(weightsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(221, 221, 221)
+                .addGap(47, 47, 47)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(weightsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(trainingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jToggleButton1))
+                .addGap(50, 50, 50)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ExpectedOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(actualOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(51, 51, 51)
                 .addComponent(jButton1)
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addGap(57, 57, 57))
         );
 
         jTabbedPane2.addTab("FORECAST", jPanel1);
@@ -104,7 +233,7 @@ public class mainUI extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(309, 309, 309)
                 .addComponent(jButton3)
-                .addContainerGap(361, Short.MAX_VALUE))
+                .addContainerGap(386, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,23 +375,130 @@ public class mainUI extends javax.swing.JFrame {
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
         // TODO add your handling code here:
-        testLabel.setText("Processing...");
         int inputNodes = (Integer) inputNeurons.getValue();
         int hiddenNodes = (Integer) hiddenNeurons.getValue();
         int outputNodes = (Integer) outputNeurons.getValue();
         String fileLocation =  filePath.getText();
-        testLabel.setText(fileLocation);
         //testLabel.setText("" + ans);
-       
-        NeuralNetwork nn = new NeuralNetwork(2, 4, 1);
-        int maxRuns = 5000000;
-        double minErrorCondition = 0.01;
-        nn.run(maxRuns, minErrorCondition);
+        
+        testLabel.setText("Processing...");
+        NeuralNetwork nn = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, false);
+        int maxRuns = 1000;
+        double minErrorCondition = 100;
+        nn.run(maxRuns, minErrorCondition, fileLocation, testLabel);
+        testLabel.setText("Done!!");
     }//GEN-LAST:event_submitBtnActionPerformed
 
     private void filePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePathActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_filePathActionPerformed
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            trainingDataPath.setText(file.getAbsolutePath());
+            
+            try {
+                bufferedReader = new BufferedReader(new FileReader(file));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+        } else {
+            System.out.println("File access cancelled by user.");
+        }
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
+
+    private void inputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputFieldActionPerformed
+
+    private void ExpectedOutputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpectedOutputFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ExpectedOutputFieldActionPerformed
+
+    private void actualOutputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualOutputFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_actualOutputFieldActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        NeuralNetwork nn = new NeuralNetwork(inputCnt, hiddenCnt, outputCnt, true);
+        actualOutputField.setText("" + nn.testRun(inputValues));        
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       String line;
+       int flag = 1;
+       
+        try {
+            
+                if(inputValues.size() == 0){
+            
+                    for (int i = 0; i < inputCnt; i++){
+                        if((line = bufferedReader.readLine()) != null) {
+                            // use comma as separator
+                            String[] cols = line.split(",");
+                            inputValues.add(Double.parseDouble(cols[1])/100);
+                            //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
+                        } else{
+                            flag = 0;
+                            break;
+                        }                
+                   }
+                } else{
+                    //shift every input to left and add previous expected output to last
+                    //and read expected output from next row.
+                    inputValues.remove(0);
+                    inputValues.add(expectedOutput[0]/100); 
+                }            
+            
+            if(flag == 1){
+                String str;
+                str = "" + inputValues.get(0) * 100;
+                
+                for(Double d: inputValues){
+                    str += ", " + (d * 100); 
+                }
+                inputField.setText(str);
+            } else{
+                inputField.setText("ERROR");
+            }
+            
+           // Read expected output to display.
+           if((line = bufferedReader.readLine()) != null){
+               String[] cols = line.split(",");
+               expectedOutput[0] = Double.parseDouble(cols[1]);
+               ExpectedOutputField.setText(cols[1]);                          
+           } else{
+                ExpectedOutputField.setText("ERROR");
+           }       
+            
+        } catch (Exception ex) {
+            Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        BufferedReader br = null;
+        File file = new File("outputWeights.csv");
+        
+        String[] cols;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            cols = br.readLine().split(",");
+            inputCnt = Integer.parseInt(cols[0]);
+            hiddenCnt = Integer.parseInt(cols[1]);
+            outputCnt = Integer.parseInt(cols[2]);
+            weightsLabel.setText("Done!!");
+            
+        } catch (Exception ex) {
+            Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
+            weightsLabel.setText("Error!!");
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -301,16 +537,25 @@ public class mainUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField ExpectedOutputField;
+    private javax.swing.JTextField actualOutputField;
     private javax.swing.JFileChooser fileChooser;
     private java.awt.TextField filePath;
     private javax.swing.JSpinner hiddenNeurons;
+    private javax.swing.JTextField inputField;
     private javax.swing.JSpinner inputNeurons;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -319,8 +564,11 @@ public class mainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JSpinner outputNeurons;
     private javax.swing.JButton submitBtn;
     private javax.swing.JLabel testLabel;
+    private javax.swing.JTextField trainingDataPath;
+    private javax.swing.JLabel weightsLabel;
     // End of variables declaration//GEN-END:variables
 }
