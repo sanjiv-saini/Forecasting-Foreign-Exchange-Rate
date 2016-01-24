@@ -24,7 +24,7 @@ public class NeuralNetwork {
     }
  
     private boolean isTrained = false;
-    final DecimalFormat df; //??
+    //final DecimalFormat df; //??
     final Random rand = new Random();
     final ArrayList<Neuron> inputLayer = new ArrayList<>();
     final ArrayList<Neuron> hiddenLayer = new ArrayList<>();
@@ -32,11 +32,14 @@ public class NeuralNetwork {
     final Neuron bias = new Neuron();
     final int[] layers;
     final int randomWeightMultiplier = 1; //??
+    
+    private String currency = "";
+    private static int currencyCol;
  
     final double epsilon = 0.00000000001; //??
  
-    final double learningRate = 0.9f; //??
-    final double momentum = 0.7f; //??
+    double learningRate = 0.35f; //??
+    double momentum = 0.7f; //??
  
     // Inputs for xor problem
     final List<Double> inputs;
@@ -49,12 +52,24 @@ public class NeuralNetwork {
     // for weight update all
     final HashMap<String, Double> weightUpdate = new HashMap<>(); //??
     
-    public NeuralNetwork(int input, int hidden, int output, boolean isTrained) {
+    public NeuralNetwork(int input, int hidden, int output, int currencyCol, boolean isTrained) {
         this.layers = new int[] { input, hidden, output };
         this.isTrained = isTrained;
-        df = new DecimalFormat("#.0#"); //??
+        this.currencyCol = currencyCol;
+       // df = new DecimalFormat("#.0#"); //??
         inputs = new ArrayList<Double>();
         expectedOutputs = new Double[output];
+        
+         switch(currencyCol){
+            case 1: currency = "UsDollar";
+                    break;
+            case 2: currency = "BritishPound";
+                    break;
+            case 3: currency = "Euro";
+                    break;
+            case 4: currency = "Yen";
+                    break;          
+        }
  
         /**
          * Create all neurons and connections Connections are created in the
@@ -218,10 +233,10 @@ public class NeuralNetwork {
         }
     }
  
-    void run(int maxSteps, double minError, String fileName, JLabel testLabel) {
+    void run(int maxSteps, double minError, String fileName) {
         int i;
         // Train neural network until minError reached or maxSteps exceeded
-        double error = 101;
+        double error = 1;
         BufferedReader br = null;
         
         System.out.println("NN Foreign Exchange Rate Forecasting.");
@@ -234,7 +249,16 @@ public class NeuralNetwork {
                 error = 0;
                 
                 String outputString = "";  
-                testLabel.setText((i/maxSteps) * 100 + "%");
+                
+                System.out.println(i);
+                   
+                inputs.clear();
+                
+                if(i == (maxSteps/4)){
+                    learningRate = 0.8;
+                    momentum = 0.4;
+                }
+                
                 for (int p = 0; readInputOutput(br); p++) {
                     
                     setInput(inputs);
@@ -247,7 +271,7 @@ public class NeuralNetwork {
                     
                     // calculate error for every run.
                     for (int j = 0; j < expectedOutputs.length; j++) {
-                        double err = Math.pow((output[j] * 100) - (expectedOutputs[j] * 100), 2);
+                        double err = Math.pow((denormalize(output[j])) - denormalize(expectedOutputs[j]), 2);
                         error += err;
                     }
                     
@@ -271,6 +295,15 @@ public class NeuralNetwork {
          
         System.out.println("Sum of squared errors = " + error);
         System.out.println("##### EPOCH " + i+"\n");
+
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("resource/training.txt", true)))) {
+            out.println("PATTERN: " + layers[0] + " " + layers[1] + " " +layers[2]);
+            out.println("Learning Rate: "+ learningRate + "  Momentum: " + momentum);
+            out.println("EPOCH: " + i);
+            out.println("Sum of squared errors = " + error + "\n");
+        }catch (IOException e) {
+            System.err.println(e);
+        }
         
       //  if (i == maxSteps) {
         //    System.out.println("!Error training try again");
@@ -284,7 +317,7 @@ public class NeuralNetwork {
     public Double testRun(List<Double> input){
         setInput(input);
         activate();
-        return (getOutput()[0] * 100);
+        return (denormalize(getOutput()[0]));
     }
     
     private boolean readInputOutput(BufferedReader br){
@@ -293,13 +326,13 @@ public class NeuralNetwork {
         
         try {  
             
-            if(inputs.size() ==0){               
-            
+                if(inputs.size() == 0){    
+                      
                 for (int i = 0; i < inputLayer.size(); i++){
                     if((line = br.readLine()) != null) {
                         // use comma as separator
                         String[] cols = line.split(",");
-                        inputs.add(Double.parseDouble(cols[1])/100);
+                        inputs.add(normalize(Double.parseDouble(cols[currencyCol])));
                         //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
                     } else{
                         return false;                
@@ -315,7 +348,7 @@ public class NeuralNetwork {
             
             if((line = br.readLine()) != null){
                 String[] cols = line.split(",");
-                expectedOutputs[0] = Double.parseDouble(cols[1])/100;                          
+                expectedOutputs[0] = normalize(Double.parseDouble(cols[currencyCol]));                          
             } else{
                 return false;
             }    
@@ -327,13 +360,59 @@ public class NeuralNetwork {
         
         return true;       
     }
-     
+    
+    public static Double normalize(Double d){
+        Double normY;
+        double max = 110, min = 0;
+        switch(currencyCol){
+           case 1: max = 69;
+                    min = 39;
+                    break;
+            case 2: max = 107;
+                    min = 63;
+                    break;
+            case 3: max = 92;
+                    min = 38;
+                    break;
+            case 4: max = 73;
+                    min = 29;
+                    break;    
+        }
+        
+        normY = (((d - min)/(max - min) )*(0.9 - 0.1)) + 0.1;
+        return normY;
+    }
+    
+    public static double denormalize(Double d){
+        Double denormY;
+        
+        double max = 110, min = 0;
+        switch(currencyCol){
+            case 1: max = 69;
+                    min = 39;
+                    break;
+            case 2: max = 107;
+                    min = 63;
+                    break;
+            case 3: max = 92;
+                    min = 38;
+                    break;
+            case 4: max = 73;
+                    min = 29;
+                    break;    
+        }
+        
+        denormY = (((d - 0.1)/(0.9 - 0.1) )*(max - min)) + min;
+        return denormY;        
+    }   
+    
+         
     private String getOutputString(){
         
         String outputStr = "EXPECTED: ";
-        outputStr += expectedOutputs[0] * 100 + " ";
+        outputStr += denormalize(expectedOutputs[0]) + " ";
         outputStr += "ACTUAL: ";
-        outputStr += resultOutputs[0][0] * 100 + " ";
+        outputStr += denormalize(resultOutputs[0][0]) + " ";
               
         return outputStr;
     }
@@ -373,7 +452,7 @@ public class NeuralNetwork {
         BufferedReader br = null;
         Integer n, c;
         Double w;
-        File file = new File("outputWeights.csv");
+        File file = new File("resource/" + currency + ".csv");
         try {
             
              br = new BufferedReader(new FileReader(file));
@@ -404,7 +483,7 @@ public class NeuralNetwork {
         
         PrintWriter printWriter = null;
         try {
-            File file = new File("outputWeights.csv");
+            File file = new File("resource/" + currency + ".csv");
             file.createNewFile();
             printWriter = new PrintWriter(file);
             printWriter.write("" + layers[0] + "," + layers[1] + "," + layers[2] + "\n");             
@@ -414,7 +493,7 @@ public class NeuralNetwork {
             for (Neuron n : hiddenLayer) {
                 ArrayList<Connection> connections = n.getAllInConnections();
                 for (Connection con : connections) {
-                    String w = df.format(con.getWeight());
+                    String w = "" + con.getWeight();//df.format(con.getWeight());
                     printWriter.write(""+ n.id + "," + con.id + "," + w +"\n");
                     printWriter.flush();
                     System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
@@ -425,7 +504,7 @@ public class NeuralNetwork {
             for (Neuron n : outputLayer) {
                 ArrayList<Connection> connections = n.getAllInConnections();
                 for (Connection con : connections) {
-                    String w = df.format(con.getWeight());
+                    String w = "" + con.getWeight();//df.format(con.getWeight());
                     printWriter.write(""+ n.id + "," + con.id + "," + w +"\n");
                     printWriter.flush();
                     System.out.println("weightUpdate.put(weightKey(" + n.id + ", "

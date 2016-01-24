@@ -6,10 +6,14 @@
 package exchangerateforecast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,10 +26,11 @@ import javax.swing.JFileChooser;
  */
 public class mainUI extends javax.swing.JFrame {
     
-    private List<Double> inputValues = new ArrayList<Double>() ;
+    private List<Double> inputValues = null ;
     private BufferedReader bufferedReader;
     private int inputCnt, hiddenCnt, outputCnt;
     private Double expectedOutput[] = new Double[5];
+    private int currencyCol;
     
     class MyCustomFilter extends javax.swing.filechooser.FileFilter {
         @Override
@@ -61,21 +66,25 @@ public class mainUI extends javax.swing.JFrame {
         fileChooser = new javax.swing.JFileChooser();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        inputField = new javax.swing.JTextField();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        ExpectedOutputField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        actualOutputField = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        trainingDataPath = new javax.swing.JTextField();
+        testCurrency = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        CurrencyComboBox = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
-        weightsLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        trainingDataPath = new javax.swing.JTextField();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        doneButton = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        readButton = new javax.swing.JButton();
+        inputField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        ExpectedOutputField = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        forecastButton = new javax.swing.JButton();
+        actualOutputField = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         inputNeurons = new javax.swing.JSpinner();
         hiddenNeurons = new javax.swing.JSpinner();
@@ -87,9 +96,12 @@ public class mainUI extends javax.swing.JFrame {
         filePath = new java.awt.TextField();
         jButton4 = new javax.swing.JButton();
         testLabel = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        CurrencyComboBox1 = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
 
         jMenu3.setText("jMenu3");
 
@@ -97,20 +109,18 @@ public class mainUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Submit");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jPanel4.setBackground(new java.awt.Color(17, 115, 156));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Step 1", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel4.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel4.setToolTipText("");
 
-        jLabel4.setText("Input:");
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Select Currency:");
 
-        inputField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputFieldActionPerformed(evt);
-            }
-        });
+        CurrencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
+
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Training Data:");
 
         jToggleButton1.setText("Browse");
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -119,131 +129,219 @@ public class mainUI extends javax.swing.JFrame {
             }
         });
 
+        doneButton.setText("Done");
+        doneButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doneButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(CurrencyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel7)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(trainingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jToggleButton1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(doneButton, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(CurrencyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(trainingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jToggleButton1))
+                .addGap(18, 18, 18)
+                .addComponent(doneButton)
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
+        jPanel5.setBackground(new java.awt.Color(17, 115, 156));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Step 2", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel5.setForeground(new java.awt.Color(255, 255, 255));
+
+        readButton.setText("Read Data");
+        readButton.setEnabled(false);
+        readButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                readButtonActionPerformed(evt);
+            }
+        });
+
+        inputField.setEditable(false);
+        inputField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Input:");
+
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Expected Output:");
+
+        ExpectedOutputField.setEditable(false);
         ExpectedOutputField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ExpectedOutputFieldActionPerformed(evt);
             }
         });
 
-        jLabel5.setText("Expected Output:");
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(readButton, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(65, 65, 65)
+                        .addComponent(ExpectedOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(readButton)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(ExpectedOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
 
+        jPanel6.setBackground(new java.awt.Color(17, 115, 156));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Step 3", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+
+        forecastButton.setText("Forecast");
+        forecastButton.setEnabled(false);
+        forecastButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forecastButtonActionPerformed(evt);
+            }
+        });
+
+        actualOutputField.setEditable(false);
         actualOutputField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 actualOutputFieldActionPerformed(evt);
             }
         });
 
-        jLabel6.setText("Actual Output:");
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(forecastButton, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44)
+                .addComponent(actualOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(forecastButton)
+                    .addComponent(actualOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
 
-        jButton2.setText("Read ");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
+        jPanel7.setBackground(new java.awt.Color(51, 153, 102));
 
-        jLabel7.setText("Training Data:");
+        jLabel10.setBackground(new java.awt.Color(51, 153, 102));
+        jLabel10.setFont(new java.awt.Font("Aharoni", 0, 36)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel10.setText("Forecasting Foreign Exchange Rate");
 
-        jButton5.setText("Read Weights");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(258, 258, 258)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(actualOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(55, 55, 55)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4))
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel5))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
-                                    .addComponent(trainingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(ExpectedOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(149, 149, 149)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(weightsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(testCurrency)
+                .addGap(44, 44, 44)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(158, 158, 158)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(weightsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(trainingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton1))
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ExpectedOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
-                .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(actualOutputField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addGap(51, 51, 51)
-                .addComponent(jButton1)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(testCurrency, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(33, 33, 33)))
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(57, 57, 57))
         );
 
         jTabbedPane2.addTab("FORECAST", jPanel1);
-
-        jButton3.setText("jButton3");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(309, 309, 309)
-                .addComponent(jButton3)
-                .addContainerGap(386, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(223, 223, 223)
-                .addComponent(jButton3)
-                .addContainerGap(192, Short.MAX_VALUE))
-        );
-
-        jTabbedPane2.addTab("ANALYSIS", jPanel3);
 
         submitBtn.setText("Submit");
         submitBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -256,7 +354,7 @@ public class mainUI extends javax.swing.JFrame {
 
         jLabel2.setText("Hidden Layer              :");
 
-        jLabel3.setText("Output Layer             :");
+        jLabel3.setText("Output Layer              :");
 
         filePath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -270,6 +368,42 @@ public class mainUI extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
+
+        CurrencyComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
+        CurrencyComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CurrencyComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setText("Select Currency          :");
+
+        jLabel6.setText("Training Data:");
+
+        jPanel8.setBackground(new java.awt.Color(51, 153, 102));
+        jPanel8.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel11.setFont(new java.awt.Font("Aharoni", 0, 36)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel11.setText("Training Feed-Forward Neural Network");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -285,23 +419,36 @@ public class mainUI extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(testLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(filePath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(inputNeurons)
                                     .addComponent(hiddenNeurons)
                                     .addComponent(outputNeurons)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))))))
+                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addComponent(CurrencyComboBox1, 0, 228, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(278, 278, 278))
+            .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(157, 157, 157)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(72, 72, 72)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CurrencyComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(inputNeurons)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -310,31 +457,36 @@ public class mainUI extends javax.swing.JFrame {
                     .addComponent(hiddenNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(outputNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outputNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(filePath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jButton4))
-                .addGap(21, 21, 21)
+                    .addComponent(jButton4)
+                    .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(testLabel)
                 .addGap(18, 18, 18)
                 .addComponent(submitBtn)
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addContainerGap(121, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("TRAINING", jPanel2);
 
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 899, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 486, Short.MAX_VALUE)
+        );
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
+        jTabbedPane2.addTab("ANALYSIS", jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -375,17 +527,21 @@ public class mainUI extends javax.swing.JFrame {
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
         // TODO add your handling code here:
+        
+        testLabel.setText("Processing...");
+        
+        int i = CurrencyComboBox1.getSelectedIndex();
+
         int inputNodes = (Integer) inputNeurons.getValue();
         int hiddenNodes = (Integer) hiddenNeurons.getValue();
         int outputNodes = (Integer) outputNeurons.getValue();
         String fileLocation =  filePath.getText();
         //testLabel.setText("" + ans);
         
-        testLabel.setText("Processing...");
-        NeuralNetwork nn = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes, false);
-        int maxRuns = 1000;
-        double minErrorCondition = 100;
-        nn.run(maxRuns, minErrorCondition, fileLocation, testLabel);
+        NeuralNetwork nn = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes,i+1 , false);
+        int maxRuns = 2000;
+        double minErrorCondition = 0.01;
+        nn.run(maxRuns, minErrorCondition, fileLocation);
         testLabel.setText("Done!!");
     }//GEN-LAST:event_submitBtnActionPerformed
 
@@ -393,98 +549,121 @@ public class mainUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_filePathActionPerformed
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        int returnVal = fileChooser.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            trainingDataPath.setText(file.getAbsolutePath());
-            
-            try {
-                bufferedReader = new BufferedReader(new FileReader(file));
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-           
-        } else {
-            System.out.println("File access cancelled by user.");
-        }
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
-
-    private void inputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputFieldActionPerformed
+    private void CurrencyComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CurrencyComboBox1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_inputFieldActionPerformed
-
-    private void ExpectedOutputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpectedOutputFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ExpectedOutputFieldActionPerformed
+    }//GEN-LAST:event_CurrencyComboBox1ActionPerformed
 
     private void actualOutputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualOutputFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_actualOutputFieldActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        NeuralNetwork nn = new NeuralNetwork(inputCnt, hiddenCnt, outputCnt, true);
-        actualOutputField.setText("" + nn.testRun(inputValues));        
+    private void forecastButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastButtonActionPerformed
+        Double output;
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+        NeuralNetwork nn = new NeuralNetwork(inputCnt, hiddenCnt, outputCnt,currencyCol, true);
+        output = nn.testRun(inputValues);
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       String line;
-       int flag = 1;
-       
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("resource/testing.txt", true)))) {
+            out.println("intput: " + inputField.getText());
+            out.println("Expected Output: " + ExpectedOutputField.getText());
+            out.println("Actual: " + output + "\n");
+        }catch (IOException e) {
+            System.err.println(e);
+        }
+
+        actualOutputField.setText("" + output);
+    }//GEN-LAST:event_forecastButtonActionPerformed
+
+    private void ExpectedOutputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpectedOutputFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ExpectedOutputFieldActionPerformed
+
+    private void inputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputFieldActionPerformed
+
+    private void readButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readButtonActionPerformed
+        String line;
+        int flag = 1;
+
         try {
-            
-                if(inputValues.size() == 0){
-            
-                    for (int i = 0; i < inputCnt; i++){
-                        if((line = bufferedReader.readLine()) != null) {
-                            // use comma as separator
-                            String[] cols = line.split(",");
-                            inputValues.add(Double.parseDouble(cols[1])/100);
-                            //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
-                        } else{
-                            flag = 0;
-                            break;
-                        }                
-                   }
-                } else{
-                    //shift every input to left and add previous expected output to last
-                    //and read expected output from next row.
-                    inputValues.remove(0);
-                    inputValues.add(expectedOutput[0]/100); 
-                }            
-            
+
+            if(inputValues == null){
+                inputValues = new ArrayList<Double>();
+                for (int i = 0; i < inputCnt; i++){
+                    if((line = bufferedReader.readLine()) != null) {
+                        // use comma as separator
+                        String[] cols = line.split(",");
+                        inputValues.add(NeuralNetwork.normalize(Double.parseDouble(cols[currencyCol])));
+                        //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
+                    } else{
+                        flag = 0;
+                        break;
+                    }
+                }
+            } else{
+                //shift every input to left and add previous expected output to last
+                //and read expected output from next row.
+                inputValues.remove(0);
+                inputValues.add(NeuralNetwork.normalize(expectedOutput[0]));
+            }
+
             if(flag == 1){
                 String str;
-                str = "" + inputValues.get(0) * 100;
-                
+                str = "" + NeuralNetwork.denormalize(inputValues.get(0));
+
                 for(Double d: inputValues){
-                    str += ", " + (d * 100); 
+                    str += ", " + NeuralNetwork.denormalize(d);
                 }
                 inputField.setText(str);
             } else{
                 inputField.setText("ERROR");
             }
-            
-           // Read expected output to display.
-           if((line = bufferedReader.readLine()) != null){
-               String[] cols = line.split(",");
-               expectedOutput[0] = Double.parseDouble(cols[1]);
-               ExpectedOutputField.setText(cols[1]);                          
-           } else{
+
+            // Read expected output to display.
+            if((line = bufferedReader.readLine()) != null){
+                String[] cols = line.split(",");
+                expectedOutput[0] = Double.parseDouble(cols[currencyCol]);
+                ExpectedOutputField.setText(cols[currencyCol]);
+            } else{
                 ExpectedOutputField.setText("ERROR");
-           }       
-            
+            }
+
         } catch (Exception ex) {
             Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        forecastButton.setEnabled(true);
+    }//GEN-LAST:event_readButtonActionPerformed
+
+    private void doneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButtonActionPerformed
         BufferedReader br = null;
-        File file = new File("outputWeights.csv");
-        
+        inputValues = null;
+        String currency = "";
+        File file = new File(trainingDataPath.getText());
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(file));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        int i = CurrencyComboBox.getSelectedIndex();
+        currencyCol = i+1;
+
+        switch(i){
+            case 0: currency = "UsDollar";
+            break;
+            case 1: currency = "BritishPound";
+            break;
+            case 2: currency = "Euro";
+            break;
+            case 3: currency = "Yen";
+            break;
+        }
+
+        file = new File("resource/" + currency + ".csv");
+
         String[] cols;
         try {
             br = new BufferedReader(new FileReader(file));
@@ -492,13 +671,28 @@ public class mainUI extends javax.swing.JFrame {
             inputCnt = Integer.parseInt(cols[0]);
             hiddenCnt = Integer.parseInt(cols[1]);
             outputCnt = Integer.parseInt(cols[2]);
-            weightsLabel.setText("Done!!");
-            
+
         } catch (Exception ex) {
             Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
-            weightsLabel.setText("Error!!");
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+        File testingFile = new File("resource/testing.txt");
+        try {
+            Files.deleteIfExists(testingFile.toPath());
+        } catch (IOException ex) {
+            Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        readButton.setEnabled(true);
+    }//GEN-LAST:event_doneButtonActionPerformed
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            trainingDataPath.setText(file.getAbsolutePath());
+        } else {
+            System.out.println("File access cancelled by user.");
+        }
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -537,38 +731,45 @@ public class mainUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> CurrencyComboBox;
+    private javax.swing.JComboBox<String> CurrencyComboBox1;
     private javax.swing.JTextField ExpectedOutputField;
     private javax.swing.JTextField actualOutputField;
+    private javax.swing.JButton doneButton;
     private javax.swing.JFileChooser fileChooser;
     private java.awt.TextField filePath;
+    private javax.swing.JButton forecastButton;
     private javax.swing.JSpinner hiddenNeurons;
     private javax.swing.JTextField inputField;
     private javax.swing.JSpinner inputNeurons;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JSpinner outputNeurons;
+    private javax.swing.JButton readButton;
     private javax.swing.JButton submitBtn;
+    private javax.swing.JLabel testCurrency;
     private javax.swing.JLabel testLabel;
     private javax.swing.JTextField trainingDataPath;
-    private javax.swing.JLabel weightsLabel;
     // End of variables declaration//GEN-END:variables
 }

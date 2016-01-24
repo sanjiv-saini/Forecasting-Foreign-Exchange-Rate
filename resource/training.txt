@@ -1,0 +1,10 @@
+PATTERN: 14 7 1
+Learning Rate: 0.8  Momentum: 0.4
+EPOCH: 10
+Sum of squared errors = 493.9775380775953
+
+PATTERN: 30 15 1
+Learning Rate: 0.8  Momentum: 0.4
+EPOCH: 946
+Sum of squared errors = 0.0
+
