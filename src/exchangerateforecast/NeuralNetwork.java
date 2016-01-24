@@ -32,14 +32,15 @@ public class NeuralNetwork {
     final Neuron bias = new Neuron();
     final int[] layers;
     final int randomWeightMultiplier = 1; //??
+    private List<String> dataList = new ArrayList<>();
     
     private String currency = "";
     private static int currencyCol;
  
     final double epsilon = 0.00000000001; //??
  
-    double learningRate = 0.35f; //??
-    double momentum = 0.7f; //??
+    double learningRate = 0.3f; //??
+    double momentum = 0.8f; //??
  
     // Inputs for xor problem
     final List<Double> inputs;
@@ -186,7 +187,7 @@ public class NeuralNetwork {
                     expectedOutput[i] = 1 - epsilon;
             }
         }*/
- 
+    
         int i = 0;
         for (Neuron n : outputLayer) {
             ArrayList<Connection> connections = n.getAllInConnections();
@@ -195,37 +196,36 @@ public class NeuralNetwork {
                 double ai = con.leftNeuron.getOutput();
                 double desiredOutput = expectedOutput[i];
                 
-                // MAIN ALGORITHM
-                double partialDerivative = -ak * (1 - ak) * ai
+                double partialDerivative = ak * (1 - ak)
                         * (desiredOutput - ak);
-                double deltaWeight = -learningRate * partialDerivative;
+                double deltaWeight = learningRate * partialDerivative * ai;
                 double newWeight = con.getWeight() + deltaWeight;
                 con.setDeltaWeight(deltaWeight);
                 con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
-                // END
             }
             i++;
         }
  
         // update weights for the hidden layer
         for (Neuron n : hiddenLayer) {
+            double aj = n.getOutput();
+            double sumKoutputs = 0;
+            int j = 0;
+            for (Neuron out_neu : outputLayer) {
+                double wjk = out_neu.getConnection(n.id).getWeight();
+                double desiredOutput = (double) expectedOutput[j];
+                double ak = out_neu.getOutput();
+                j++;
+                sumKoutputs = sumKoutputs
+                        + ((desiredOutput - ak) * ak * (1 - ak) * wjk);
+            }
+            
+            double partialDerivative = aj * (1 - aj) * sumKoutputs;
+            
             ArrayList<Connection> connections = n.getAllInConnections();
             for (Connection con : connections) {
-                double aj = n.getOutput();
-                double ai = con.leftNeuron.getOutput();
-                double sumKoutputs = 0;
-                int j = 0;
-                for (Neuron out_neu : outputLayer) {
-                    double wjk = out_neu.getConnection(n.id).getWeight();
-                    double desiredOutput = (double) expectedOutput[j];
-                    double ak = out_neu.getOutput();
-                    j++;
-                    sumKoutputs = sumKoutputs
-                            + (-(desiredOutput - ak) * ak * (1 - ak) * wjk);
-                }
- 
-                double partialDerivative = aj * (1 - aj) * ai * sumKoutputs;
-                double deltaWeight = -learningRate * partialDerivative;
+                double ai = con.leftNeuron.getOutput();                 
+                double deltaWeight = learningRate * partialDerivative * ai;
                 double newWeight = con.getWeight() + deltaWeight;
                 con.setDeltaWeight(deltaWeight);
                 con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
@@ -233,63 +233,57 @@ public class NeuralNetwork {
         }
     }
  
-    void run(int maxSteps, double minError, String fileName) {
+    void run(int maxSteps, double minError, String fileName) throws FileNotFoundException, IOException {
         int i;
+        String line;
         // Train neural network until minError reached or maxSteps exceeded
         double error = 1;
         BufferedReader br = null;
         
         System.out.println("NN Foreign Exchange Rate Forecasting.");
 
+        File file = new File(fileName);                
+        br = new BufferedReader(new FileReader(file));
+        dataList.clear();
+
+        while((line = br.readLine()) != null){
+            dataList.add(line);
+        }
+
         for (i = 0; i < maxSteps && error > minError; i++) {
+            error = 0;
+            Iterator<String> dataListItr= dataList.iterator();
+            
+            String outputString = "";
+            System.out.println(i);
+            inputs.clear();
+           
+            for (int p = 0; readInputOutput(dataListItr); p++) {
+                
+                setInput(inputs);
+                activate();
+                
+                output = getOutput();  
+                resultOutputs[0] = output;
+                
+                outputString += getOutputString()+"\n";
+                
+                // calculate error for every run.
+                for (int j = 0; j < expectedOutputs.length; j++) {
+                    double err = Math.pow((denormalize(output[j])) - denormalize(expectedOutputs[j]), 2);
+                    error += err;
+                }
+                
+                
+                applyBackpropagation(expectedOutputs);
+            }
+            if((i+1) == maxSteps || error <= minError){
+                System.out.println(outputString);
+            }
             try {
-                File file = new File(fileName);
-                
-                br = new BufferedReader(new FileReader(file));
-                error = 0;
-                
-                String outputString = "";  
-                
-                System.out.println(i);
-                   
-                inputs.clear();
-                
-                if(i == (maxSteps/4)){
-                    learningRate = 0.8;
-                    momentum = 0.4;
-                }
-                
-                for (int p = 0; readInputOutput(br); p++) {
-                    
-                    setInput(inputs);
-                    activate();
-                    
-                    output = getOutput();
-                    resultOutputs[0] = output;
-                    
-                    outputString += getOutputString()+"\n";
-                    
-                    // calculate error for every run.
-                    for (int j = 0; j < expectedOutputs.length; j++) {
-                        double err = Math.pow((denormalize(output[j])) - denormalize(expectedOutputs[j]), 2);
-                        error += err;
-                    }
-                    
-                    
-                    applyBackpropagation(expectedOutputs);
-                }
-                
-                if((i+1) == maxSteps || error <= minError){
-                    System.out.println(outputString);
-                }
-            } catch (FileNotFoundException ex) {
+                br.close();
+            } catch (IOException ex) {
                 Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                try {
-                    br.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(NeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         }
          
@@ -297,6 +291,7 @@ public class NeuralNetwork {
         System.out.println("##### EPOCH " + i+"\n");
 
         try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("resource/training.txt", true)))) {
+            out.println("Currency: "+ currency);
             out.println("PATTERN: " + layers[0] + " " + layers[1] + " " +layers[2]);
             out.println("Learning Rate: "+ learningRate + "  Momentum: " + momentum);
             out.println("EPOCH: " + i);
@@ -320,17 +315,17 @@ public class NeuralNetwork {
         return (denormalize(getOutput()[0]));
     }
     
-    private boolean readInputOutput(BufferedReader br){
+    private boolean readInputOutput(Iterator<String> dataListItr){
         String line;
-       
-        
+               
         try {  
             
                 if(inputs.size() == 0){    
                       
                 for (int i = 0; i < inputLayer.size(); i++){
-                    if((line = br.readLine()) != null) {
+                    if(dataListItr.hasNext()) {
                         // use comma as separator
+                        line = dataListItr.next();
                         String[] cols = line.split(",");
                         inputs.add(normalize(Double.parseDouble(cols[currencyCol])));
                         //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
@@ -346,7 +341,8 @@ public class NeuralNetwork {
                 inputs.add(expectedOutputs[0]);                              
             }
             
-            if((line = br.readLine()) != null){
+            if(dataListItr.hasNext()){
+                line = dataListItr.next();
                 String[] cols = line.split(",");
                 expectedOutputs[0] = normalize(Double.parseDouble(cols[currencyCol]));                          
             } else{

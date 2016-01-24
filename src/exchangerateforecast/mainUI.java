@@ -109,7 +109,7 @@ public class mainUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel4.setBackground(new java.awt.Color(17, 115, 156));
+        jPanel4.setBackground(new java.awt.Color(102, 102, 102));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Step 1", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel4.setForeground(new java.awt.Color(255, 255, 255));
         jPanel4.setToolTipText("");
@@ -176,7 +176,7 @@ public class mainUI extends javax.swing.JFrame {
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
-        jPanel5.setBackground(new java.awt.Color(17, 115, 156));
+        jPanel5.setBackground(new java.awt.Color(102, 102, 102));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Step 2", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel5.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -240,7 +240,7 @@ public class mainUI extends javax.swing.JFrame {
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
-        jPanel6.setBackground(new java.awt.Color(17, 115, 156));
+        jPanel6.setBackground(new java.awt.Color(102, 102, 102));
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Step 3", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
 
         forecastButton.setText("Forecast");
@@ -539,9 +539,13 @@ public class mainUI extends javax.swing.JFrame {
         //testLabel.setText("" + ans);
         
         NeuralNetwork nn = new NeuralNetwork(inputNodes, hiddenNodes, outputNodes,i+1 , false);
-        int maxRuns = 2000;
+        int maxRuns = 5000;
         double minErrorCondition = 0.01;
-        nn.run(maxRuns, minErrorCondition, fileLocation);
+        try {
+            nn.run(maxRuns, minErrorCondition, fileLocation);
+        } catch (IOException ex) {
+            Logger.getLogger(mainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         testLabel.setText("Done!!");
     }//GEN-LAST:event_submitBtnActionPerformed
 
