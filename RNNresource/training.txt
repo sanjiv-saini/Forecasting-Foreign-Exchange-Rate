@@ -1,0 +1,24 @@
+Currency: UsDollar
+PATTERN: 30 15 15
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 226.68297995538288
+
+Currency: BritishPound
+PATTERN: 30 15 15
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 501.54705045269594
+
+Currency: Euro
+PATTERN: 30 15 15
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 435.4891259209086
+
+Currency: Yen
+PATTERN: 30 15 15
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 485.5884677693043
+
