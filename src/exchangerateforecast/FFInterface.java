@@ -121,7 +121,7 @@ public class FFInterface extends javax.swing.JFrame {
         CurrencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
 
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("Training Data:");
+        jLabel7.setText("Testing Data:");
 
         jToggleButton1.setText("Browse");
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -352,6 +352,7 @@ public class FFInterface extends javax.swing.JFrame {
         });
 
         jLabel1.setText("Input Layer                 :");
+        jLabel1.setToolTipText("");
 
         jLabel2.setText("Hidden Layer              :");
 

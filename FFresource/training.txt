@@ -56,3 +56,9 @@ Learning Rate: 0.30000001192092896  Momentum: 0.8999999761581421
 EPOCH: 5000
 Sum of squared errors = 433.0520828587601
 
+Currency: Euro
+PATTERN: 30 15 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 5000
+Sum of squared errors = 311.8907479225567
+
