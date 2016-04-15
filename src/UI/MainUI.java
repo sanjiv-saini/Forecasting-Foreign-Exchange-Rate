@@ -1,37 +1,50 @@
 package UI;
 
+import feedForward.FFTrain;
+import feedForward.NNData;
+import main.FFInterface;
+//import main.FFNeuralNetwork;
 import java.awt.CardLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import sun.awt.image.ToolkitImage;
 import java.awt.Graphics;  
  import javax.swing.JPanel;  
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Random;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.text.JTextComponent;
+import main.RNNInterface;
+import recurrent.RecurrentData;
+import recurrent.RecurrentTrain;
 
 
 /*
@@ -68,6 +81,33 @@ public class MainUI extends javax.swing.JFrame {
         }
     } 
     
+    class MyfnnListener implements PropertyChangeListener{
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if ("progress" == evt.getPropertyName()) {
+            int progress = (Integer) evt.getNewValue();
+            jProgressBar1.setValue(progress);
+//            taskOutput.append(String.format(
+//                    "Completed %d%% of task.\n", task.getProgress()));
+        } 
+        }
+    
+    }
+    
+    class MyRnnListener implements PropertyChangeListener{
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if ("progress" == evt.getPropertyName()) {
+            int progress = (Integer) evt.getNewValue();
+            rProgressBar.setValue(progress);
+            } 
+        }
+    
+    }
+    
+    
     static MyOwnFocusTraversalPolicy newPolicy;
     private int algo = 1;
 
@@ -88,7 +128,7 @@ public class MainUI extends javax.swing.JFrame {
         filePath = new java.awt.TextField();
         jButton4 = new javax.swing.JButton();
         testLabel = new javax.swing.JLabel();
-        CurrencyComboBox5 = new javax.swing.JComboBox<>();
+        fCurrencyComboBox = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
@@ -98,8 +138,8 @@ public class MainUI extends javax.swing.JFrame {
         JFormattedTextField format2 = ((JSpinner.DefaultEditor) hiddenNeurons.getEditor()).getTextField();
         format2.addFocusListener(fcsListener);
         jLabel5 = new javax.swing.JLabel();
-        outputNeurons = new javax.swing.JSpinner();
-        JFormattedTextField format3 = ((JSpinner.DefaultEditor) outputNeurons.getEditor()).getTextField();
+        fOutputNeurons = new javax.swing.JSpinner();
+        JFormattedTextField format3 = ((JSpinner.DefaultEditor) fOutputNeurons.getEditor()).getTextField();
         format3.addFocusListener(fcsListener);
         jLabel23 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
@@ -107,38 +147,50 @@ public class MainUI extends javax.swing.JFrame {
         inputNeurons = new javax.swing.JSpinner();
         JFormattedTextField format1 = ((JSpinner.DefaultEditor) inputNeurons.getEditor()).getTextField();
         format1.addFocusListener(fcsListener);
-        jProgressBar1 = new javax.swing.JProgressBar();
-        submitBtn1 = new javax.swing.JButton();
+        jProgressBar1 = new JProgressBar(0, 100);
+        finishBtn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        epochInput = new javax.swing.JSpinner();
+        JFormattedTextField format0 = ((JSpinner.DefaultEditor) epochInput.getEditor()).getTextField();
+        format0.addFocusListener(fcsListener);
+        jLabel31 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
         jFrame2 = new javax.swing.JFrame();
         jPanel7 = new javax.swing.JPanel();
-        submitBtn2 = new javax.swing.JButton();
-        filePath2 = new java.awt.TextField();
+        rSubmitBtn = new javax.swing.JButton();
+        rFilePath = new java.awt.TextField();
         jButton6 = new javax.swing.JButton();
         testLabel1 = new javax.swing.JLabel();
-        CurrencyComboBox7 = new javax.swing.JComboBox<>();
+        rCurrencyComboBox = new javax.swing.JComboBox<>();
         jLabel26 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        hiddenNeurons1 = new javax.swing.JSpinner();
-        JFormattedTextField format5 = ((JSpinner.DefaultEditor) hiddenNeurons1.getEditor()).getTextField();
+        rHiddenNeurons1 = new javax.swing.JSpinner();
+        JFormattedTextField format5 = ((JSpinner.DefaultEditor) rHiddenNeurons1.getEditor()).getTextField();
         format5.addFocusListener(fcsListener);
         jLabel12 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
-        inputNeurons2 = new javax.swing.JSpinner();
-        JFormattedTextField format4 = ((JSpinner.DefaultEditor) inputNeurons2.getEditor()).getTextField();
+        rInputNeurons = new javax.swing.JSpinner();
+        JFormattedTextField format4 = ((JSpinner.DefaultEditor) rInputNeurons.getEditor()).getTextField();
         format4.addFocusListener(fcsListener);
-        outputNeurons2 = new javax.swing.JSpinner();
-        JFormattedTextField format7 = ((JSpinner.DefaultEditor) outputNeurons2.getEditor()).getTextField();
+        rOutputNeurons = new javax.swing.JSpinner();
+        JFormattedTextField format7 = ((JSpinner.DefaultEditor) rOutputNeurons.getEditor()).getTextField();
         format7.addFocusListener(fcsListener);
-        hiddenNeurons2 = new javax.swing.JSpinner();
-        JFormattedTextField format6 = ((JSpinner.DefaultEditor) hiddenNeurons2.getEditor()).getTextField();
+        rHiddenNeurons2 = new javax.swing.JSpinner();
+        JFormattedTextField format6 = ((JSpinner.DefaultEditor) rHiddenNeurons2.getEditor()).getTextField();
         format6.addFocusListener(fcsListener);
-        jProgressBar3 = new javax.swing.JProgressBar();
-        submitBtn5 = new javax.swing.JButton();
+        rProgressBar = new javax.swing.JProgressBar();
+        rFinishBtn = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        rSpinner = new javax.swing.JSpinner();
+        JFormattedTextField format8 = ((JSpinner.DefaultEditor) rSpinner.getEditor()).getTextField();
+        format8.addFocusListener(fcsListener);
+        jLabel30 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         UIManager.put("TabbedPane.contentAreaColor ",ColorUIResource.RED);
@@ -171,7 +223,7 @@ public class MainUI extends javax.swing.JFrame {
                 super.paintComponent(g);
             }
         };
-        jTextArea3 = jTextArea3 = new JTextArea()
+        jPanel4 = new JPanel()
         {
             protected void paintComponent(Graphics g)
             {
@@ -180,7 +232,8 @@ public class MainUI extends javax.swing.JFrame {
                 super.paintComponent(g);
             }
         };
-        jTextArea4 = jTextArea4 = new JTextArea()
+        jTextArea4 = new javax.swing.JTextArea();
+        jPanel6 = new JPanel()
         {
             protected void paintComponent(Graphics g)
             {
@@ -189,6 +242,7 @@ public class MainUI extends javax.swing.JFrame {
                 super.paintComponent(g);
             }
         };
+        jTextArea5 = new javax.swing.JTextArea();
         jPanel8 = new JPanel() {  
             public void paintComponent(Graphics g) {  
                 Image img = Toolkit.getDefaultToolkit().getImage(  
@@ -267,73 +321,6 @@ public class MainUI extends javax.swing.JFrame {
             }
         };
         doneButton1 = new javax.swing.JButton();
-        jPanel4 = new JPanel() {  
-            public void paintComponent(Graphics g) {  
-                Image img = Toolkit.getDefaultToolkit().getImage(  
-                    MainUI.class.getResource("/resources/NNImage.jpg"));  
-                g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);  
-            }  
-        };  ;
-        jPanel14 = new JPanel()
-        {
-            protected void paintComponent(Graphics g)
-            {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
-            }
-        };
-        jLabel15 = new javax.swing.JLabel();
-        CurrencyComboBox4 = new JComboBox()
-        {
-            protected void paintComponent(Graphics g)
-            {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
-            }
-        };
-        jLabel16 = new javax.swing.JLabel();
-        trainingDataPath4 = new JTextField()
-        {
-            protected void paintComponent(Graphics g)
-            {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
-            }
-        };
-        jToggleButton5 = new javax.swing.JToggleButton();
-        doneButton6 = new javax.swing.JButton();
-        jScrollPane2 = new JScrollPane()
-        {
-            protected void paintComponent(Graphics g)
-            {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
-            }
-        };
-        jTable2 = new JTable()
-        {
-            protected void paintComponent(Graphics g)
-            {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
-            }
-        };
-        jPanel6 = new JPanel()
-        {
-            protected void paintComponent(Graphics g)
-            {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
-            }
-        };
-        doneButton7 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
 
         fileChooser.setFileFilter(new MyCustomFilter());
 
@@ -342,7 +329,7 @@ public class MainUI extends javax.swing.JFrame {
         jFrame1.setBackground(new java.awt.Color(102, 102, 102));
         jFrame1.setFocusTraversalPolicyProvider(true);
         jFrame1.setResizable(false);
-        jFrame1.setSize(new java.awt.Dimension(570, 400));
+        jFrame1.setSize(new java.awt.Dimension(580, 420));
 
         jPanel5.setBackground(new java.awt.Color(51, 51, 51));
         jPanel5.setAlignmentX(0.0F);
@@ -374,14 +361,15 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
 
-        CurrencyComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
-        CurrencyComboBox5.addActionListener(new java.awt.event.ActionListener() {
+        fCurrencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
+        fCurrencyComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CurrencyComboBox5ActionPerformed(evt);
+                fCurrencyComboBoxActionPerformed(evt);
             }
         });
 
         jLabel17.setForeground(new java.awt.Color(240, 240, 240));
+        jLabel17.setLabelFor(fCurrencyComboBox);
         jLabel17.setText("Select Currency                                                :");
 
         jLabel6.setForeground(new java.awt.Color(240, 240, 240));
@@ -391,6 +379,7 @@ public class MainUI extends javax.swing.JFrame {
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Enter Neurons", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(240, 240, 240))); // NOI18N
 
         jLabel3.setForeground(new java.awt.Color(240, 240, 240));
+        jLabel3.setLabelFor(inputNeurons);
         jLabel3.setText("Input Layer:");
         jLabel3.setToolTipText("");
         jLabel3.setAlignmentY(0.0F);
@@ -401,6 +390,8 @@ public class MainUI extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(240, 240, 240));
         jLabel4.setText("Hidden Layer:");
 
+        hiddenNeurons.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
         jLabel5.setForeground(new java.awt.Color(240, 240, 240));
         jLabel5.setText("Output Layer:");
 
@@ -408,7 +399,7 @@ public class MainUI extends javax.swing.JFrame {
         jLabel23.setForeground(new java.awt.Color(255, 153, 102));
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
         jLabel23.setToolTipText("<html>Enter number of neurons in input layer<br>equal to number of input.</html>");
-        jLabel23.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel23.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel24.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel24.setForeground(new java.awt.Color(255, 153, 102));
@@ -441,7 +432,7 @@ public class MainUI extends javax.swing.JFrame {
                     .addComponent(hiddenNeurons, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(outputNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fOutputNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -454,11 +445,9 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -467,19 +456,35 @@ public class MainUI extends javax.swing.JFrame {
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
                             .addComponent(hiddenNeurons)
-                            .addComponent(outputNeurons))
+                            .addComponent(fOutputNeurons))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(inputNeurons))
                 .addContainerGap())
         );
 
-        submitBtn1.setText("Finish");
-        submitBtn1.setEnabled(false);
-        submitBtn1.addActionListener(new java.awt.event.ActionListener() {
+        jProgressBar1.setForeground(new java.awt.Color(51, 128, 244));
+        jProgressBar1.setStringPainted(true);
+
+        finishBtn.setText("Finish");
+        finishBtn.setEnabled(false);
+        finishBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitBtn1ActionPerformed(evt);
+                finishBtnActionPerformed(evt);
             }
         });
+
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setLabelFor(epochInput);
+        jLabel1.setText("Number of Epoch");
+
+        jLabel31.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
+        jLabel31.setForeground(new java.awt.Color(255, 153, 102));
+        jLabel31.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
+        jLabel31.setToolTipText("<html>Number of Iteration to train over training data.</html>");
+        jLabel31.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel14.setText("         :");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -493,21 +498,30 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(63, 63, 63)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel17)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel31)
+                                .addGap(82, 82, 82)
+                                .addComponent(jLabel14)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(CurrencyComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(fCurrencyComboBox, 0, 137, Short.MAX_VALUE)
+                            .addComponent(epochInput)))
                     .addComponent(jLabel6)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(submitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(submitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(submitBtn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(63, Short.MAX_VALUE))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(finishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -515,25 +529,34 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
-                    .addComponent(CurrencyComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fCurrencyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(epochInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel5Layout.createSequentialGroup()
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(3, 3, 3)))
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel31, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton4)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(85, 85, 85)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(61, 61, 61)
-                        .addComponent(testLabel))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(submitBtn1)
-                            .addComponent(submitBtn))))
+                        .addComponent(jLabel6)
+                        .addGap(2, 2, 2)
+                        .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(29, 29, 29)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(finishBtn)
+                    .addComponent(submitBtn))
+                .addGap(29, 29, 29)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addComponent(testLabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -547,9 +570,9 @@ public class MainUI extends javax.swing.JFrame {
         );
         jFrame1Layout.setVerticalGroup(
             jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 404, Short.MAX_VALUE)
+            .addGap(0, 420, Short.MAX_VALUE)
             .addGroup(jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
         );
 
         jFrame1.setLocationRelativeTo(null);
@@ -558,17 +581,18 @@ public class MainUI extends javax.swing.JFrame {
         jFrame2.setTitle("Train Recurrent Neural Network");
         jFrame2.setBackground(new java.awt.Color(102, 102, 102));
         jFrame2.setResizable(false);
-        jFrame2.setSize(new java.awt.Dimension(570, 420));
+        jFrame2.setSize(new java.awt.Dimension(601, 460));
 
-        Vector<Component> order = new Vector<Component>(9);
-        order.add(CurrencyComboBox7);
+        Vector<Component> order = new Vector<Component>(10);
+        order.add(rCurrencyComboBox);
+        order.add(format8);
         order.add(format4);
         order.add(format5);
         order.add(format6);
         order.add(format7);
-        order.add(filePath2);
+        order.add(rFilePath);
         order.add(jButton6);
-        order.add(submitBtn2);
+        order.add(rSubmitBtn);
 
         newPolicy = new MyOwnFocusTraversalPolicy(order);
         jPanel7.setBackground(new java.awt.Color(51, 51, 51));
@@ -576,23 +600,23 @@ public class MainUI extends javax.swing.JFrame {
         jPanel7.setAlignmentY(0.0F);
         jPanel7.setFocusCycleRoot(true);
         jPanel7.setFocusTraversalPolicy(newPolicy);
-        jPanel7.setPreferredSize(new java.awt.Dimension(480, 480));
+        jPanel7.setPreferredSize(new java.awt.Dimension(590, 460));
 
-        submitBtn2.setText("Start");
-        submitBtn2.addActionListener(new java.awt.event.ActionListener() {
+        rSubmitBtn.setText("Start");
+        rSubmitBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitBtn2ActionPerformed(evt);
+                rSubmitBtnActionPerformed(evt);
             }
         });
 
-        filePath2.addFocusListener(new java.awt.event.FocusAdapter() {
+        rFilePath.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                filePath2FocusGained(evt);
+                rFilePathFocusGained(evt);
             }
         });
-        filePath2.addActionListener(new java.awt.event.ActionListener() {
+        rFilePath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filePath2ActionPerformed(evt);
+                rFilePathActionPerformed(evt);
             }
         });
 
@@ -603,15 +627,15 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
 
-        CurrencyComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
-        CurrencyComboBox7.addActionListener(new java.awt.event.ActionListener() {
+        rCurrencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
+        rCurrencyComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CurrencyComboBox7ActionPerformed(evt);
+                rCurrencyComboBoxActionPerformed(evt);
             }
         });
 
         jLabel26.setForeground(new java.awt.Color(240, 240, 240));
-        jLabel26.setText("Select Currency                                                :");
+        jLabel26.setText("Select Currency                                                   :");
 
         jLabel9.setForeground(new java.awt.Color(240, 240, 240));
         jLabel9.setText("Training Data Path:");
@@ -630,7 +654,7 @@ public class MainUI extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(240, 240, 240));
         jLabel11.setText("Hidden Layer:");
 
-        hiddenNeurons1.setNextFocusableComponent(hiddenNeurons2);
+        rHiddenNeurons1.setNextFocusableComponent(rHiddenNeurons2);
 
         jLabel12.setForeground(new java.awt.Color(240, 240, 240));
         jLabel12.setText("Output Layer:");
@@ -639,7 +663,7 @@ public class MainUI extends javax.swing.JFrame {
         jLabel27.setForeground(new java.awt.Color(255, 153, 102));
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
         jLabel27.setToolTipText("<html>Enter number of neurons in input layer<br>equal to number of input.</html>");
-        jLabel27.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel27.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel28.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel28.setForeground(new java.awt.Color(255, 153, 102));
@@ -651,11 +675,11 @@ public class MainUI extends javax.swing.JFrame {
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
         jLabel29.setToolTipText("<html>Enter number of neurons in output layer<br> of NN, equal to number of output.</html>");
 
-        inputNeurons2.setNextFocusableComponent(hiddenNeurons1);
+        rInputNeurons.setNextFocusableComponent(rHiddenNeurons1);
 
-        outputNeurons2.setNextFocusableComponent(filePath2);
+        rOutputNeurons.setNextFocusableComponent(rFilePath);
 
-        hiddenNeurons2.setNextFocusableComponent(outputNeurons2);
+        rHiddenNeurons2.setNextFocusableComponent(rOutputNeurons);
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -668,22 +692,22 @@ public class MainUI extends javax.swing.JFrame {
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel27))
-                    .addComponent(inputNeurons2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(48, 48, 48)
+                    .addComponent(rInputNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(52, 52, 52)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel11Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel28))
-                    .addComponent(hiddenNeurons1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hiddenNeurons2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rHiddenNeurons2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rHiddenNeurons1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(52, 52, 52)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel11Layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel29))
-                    .addComponent(outputNeurons2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rOutputNeurons, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(38, 38, 38))
         );
         jPanel11Layout.setVerticalGroup(
@@ -692,11 +716,9 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -704,51 +726,83 @@ public class MainUI extends javax.swing.JFrame {
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel11Layout.createSequentialGroup()
                         .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(hiddenNeurons1)
-                            .addComponent(outputNeurons2))
+                            .addComponent(rHiddenNeurons1)
+                            .addComponent(rOutputNeurons))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(hiddenNeurons2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rHiddenNeurons2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28))
                     .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addComponent(inputNeurons2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rInputNeurons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
-        submitBtn5.setText("Finish");
-        submitBtn5.setEnabled(false);
-        submitBtn5.addActionListener(new java.awt.event.ActionListener() {
+        rProgressBar.setForeground(new java.awt.Color(51, 128, 244));
+        rProgressBar.setStringPainted(true);
+
+        rFinishBtn.setText("Finish");
+        rFinishBtn.setEnabled(false);
+        rFinishBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitBtn5ActionPerformed(evt);
+                rFinishBtnActionPerformed(evt);
             }
         });
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setLabelFor(rSpinner);
+        jLabel2.setText("Number of Epoch");
+
+        jLabel30.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
+        jLabel30.setForeground(new java.awt.Color(255, 153, 102));
+        jLabel30.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
+        jLabel30.setToolTipText("<html>Number of Iteration to train over training data.</html>");
+        jLabel30.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("          :");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addGap(224, 224, 224)
-                .addComponent(testLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(49, 49, 49))
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jProgressBar3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(58, 58, 58)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel26)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(CurrencyComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel9)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(224, 224, 224)
+                        .addComponent(testLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(49, 49, 49))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(filePath2, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(submitBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(submitBtn5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(81, Short.MAX_VALUE))
+                            .addComponent(rProgressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel7Layout.createSequentialGroup()
+                                        .addComponent(jLabel26)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel7Layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel30)
+                                        .addGap(88, 88, 88)
+                                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(111, 111, 111)))
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(rCurrencyComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(rSpinner, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(rSubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(rFinishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(rFilePath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(70, 70, 70))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -756,42 +810,52 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
-                    .addComponent(CurrencyComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(rCurrencyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(filePath2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(submitBtn2)
-                            .addComponent(submitBtn5))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(rSpinner)
+                                .addComponent(jLabel13))
+                            .addComponent(jLabel2))
+                        .addGap(17, 17, 17)
+                        .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jProgressBar3, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(testLabel1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jLabel9))
+                    .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton6)
+                    .addComponent(rFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(40, 40, 40)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rSubmitBtn, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(rFinishBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(testLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jFrame2Layout = new javax.swing.GroupLayout(jFrame2.getContentPane());
         jFrame2.getContentPane().setLayout(jFrame2Layout);
         jFrame2Layout.setHorizontalGroup(
             jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 570, Short.MAX_VALUE)
+            .addGap(0, 601, Short.MAX_VALUE)
             .addGroup(jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 570, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jFrame2Layout.createSequentialGroup()
+                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jFrame2Layout.setVerticalGroup(
             jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 404, Short.MAX_VALUE)
+            .addGap(0, 460, Short.MAX_VALUE)
             .addGroup(jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jFrame2Layout.createSequentialGroup()
+                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jFrame2.setLocationRelativeTo(null);
@@ -811,6 +875,7 @@ public class MainUI extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(56, 56, 56, 150));
         jPanel3.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel3.setLayout(null);
 
         jTextArea1.setEditable(false);
         jTextArea1.setBackground(new java.awt.Color(56, 56, 56, 180));
@@ -836,6 +901,8 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea1.setSelectionEnd(0);
         jTextArea1.setSelectionStart(0);
         jTextArea1.setVerifyInputWhenFocusTarget(false);
+        jPanel3.add(jTextArea1);
+        jTextArea1.setBounds(170, 120, 1040, 60);
 
         jTextArea2.setEditable(false);
         jTextArea2.setBackground(new java.awt.Color(56, 56, 56, 180));
@@ -854,78 +921,138 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea2.setOpaque(false);
         jTextArea2.setRequestFocusEnabled(false);
         jTextArea2.setVerifyInputWhenFocusTarget(false);
+        jPanel3.add(jTextArea2);
+        jTextArea2.setBounds(170, 190, 1040, 290);
 
-        jTextArea3.setEditable(false);
-        jTextArea3.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jTextArea3.setColumns(20);
-        jTextArea3.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
-        jTextArea3.setForeground(new java.awt.Color(255, 255, 255));
-        jTextArea3.setRows(5);
-        jTextArea3.setText("                    Recurrent Neural Netwrok");
-        jTextArea3.setAlignmentX(2.0F);
-        jTextArea3.setAlignmentY(2.0F);
-        jTextArea3.setAutoscrolls(false);
-        jTextArea3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
-        jTextArea3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jTextArea3.setDisabledTextColor(new java.awt.Color(255, 255, 255));
-        jTextArea3.setFocusable(false);
-        jTextArea3.setMargin(new java.awt.Insets(10, 10, 10, 10));
-        jTextArea3.setOpaque(false);
-        jTextArea3.addMouseListener(new java.awt.event.MouseAdapter() {
+        jPanel4.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
+        jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel4.setInheritsPopupMenu(true);
+        jPanel4.setOpaque(false);
+        jPanel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextArea3MouseClicked(evt);
+                jPanel4MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jPanel4MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jPanel4MouseExited(evt);
             }
         });
 
         jTextArea4.setEditable(false);
         jTextArea4.setBackground(new java.awt.Color(56, 56, 56, 180));
         jTextArea4.setColumns(20);
-        jTextArea4.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        jTextArea4.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         jTextArea4.setForeground(new java.awt.Color(255, 255, 255));
         jTextArea4.setRows(5);
-        jTextArea4.setText("               Feed Forward Neural Network");
+        jTextArea4.setText("Feed Forward Neural Network");
         jTextArea4.setAlignmentX(2.0F);
         jTextArea4.setAlignmentY(2.0F);
-        jTextArea4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
         jTextArea4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jTextArea4.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
         jTextArea4.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jTextArea4.setEnabled(false);
         jTextArea4.setFocusable(false);
-        jTextArea4.setMargin(new java.awt.Insets(10, 10, 10, 10));
         jTextArea4.setOpaque(false);
         jTextArea4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTextArea4MouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jTextArea4MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jTextArea4MouseExited(evt);
+            }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(170, 170, 170)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 1040, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 1040, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jTextArea4, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jTextArea3, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE))))
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextArea4, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(113, 113, 113))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(jTextArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextArea4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextArea3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTextArea4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Home", jPanel3);
+        jPanel3.add(jPanel4);
+        jPanel4.setBounds(170, 480, 520, 60);
+
+        jPanel6.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
+        jPanel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel6.setInheritsPopupMenu(true);
+        jPanel6.setOpaque(false);
+        jPanel6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel6MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jPanel6MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jPanel6MouseExited(evt);
+            }
+        });
+
+        jTextArea5.setEditable(false);
+        jTextArea5.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jTextArea5.setColumns(20);
+        jTextArea5.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        jTextArea5.setForeground(new java.awt.Color(255, 255, 255));
+        jTextArea5.setRows(5);
+        jTextArea5.setText("Recurrent Neural Network");
+        jTextArea5.setAlignmentX(2.0F);
+        jTextArea5.setAlignmentY(2.0F);
+        jTextArea5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jTextArea5.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+        jTextArea5.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jTextArea5.setEnabled(false);
+        jTextArea5.setFocusable(false);
+        jTextArea5.setOpaque(false);
+        jTextArea5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextArea5MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jTextArea5MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jTextArea5MouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(160, Short.MAX_VALUE)
+                .addComponent(jTextArea5, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(113, 113, 113))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTextArea5, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
+        );
+
+        jPanel3.add(jPanel6);
+        jPanel6.setBounds(690, 480, 520, 60);
+
+        jTabbedPane1.addTab("          Home          ", jPanel3);
 
         jPanel10.setBackground(new java.awt.Color(56, 56, 56, 180));
         jPanel10.setDoubleBuffered(false);
@@ -943,8 +1070,14 @@ public class MainUI extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Testing Data:");
 
-        testingDataPath.setBackground(new java.awt.Color(255, 255, 255, 180));
+        testingDataPath.setBackground(new java.awt.Color(255, 255, 255, 200));
+        testingDataPath.setMargin(new java.awt.Insets(2, 4, 2, 2));
         testingDataPath.setOpaque(false);
+        testingDataPath.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                testingDataPathFocusGained(evt);
+            }
+        });
         testingDataPath.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 testingDataPathMouseClicked(evt);
@@ -1048,7 +1181,6 @@ public class MainUI extends javax.swing.JFrame {
         jRadioButton1.setBackground(new java.awt.Color(56, 56, 56, 180));
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton1.setSelected(true);
         jRadioButton1.setText("Feed Forward Neural Network");
         jRadioButton1.setBorder(null);
         jRadioButton1.setContentAreaFilled(false);
@@ -1141,12 +1273,12 @@ public class MainUI extends javax.swing.JFrame {
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(258, Short.MAX_VALUE))
+                .addContainerGap(275, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(47, Short.MAX_VALUE)
+                .addContainerGap(37, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1157,164 +1289,7 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(36, 36, 36))
         );
 
-        jTabbedPane1.addTab("Forecast Foreign Exchange Rate", jPanel8);
-
-        jPanel4.setBackground(new java.awt.Color(56, 56, 56, 150));
-
-        jPanel14.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jPanel14.setDoubleBuffered(false);
-        jPanel14.setEnabled(false);
-        jPanel14.setFocusable(false);
-        jPanel14.setOpaque(false);
-
-        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel15.setText("Select Currency:");
-
-        CurrencyComboBox4.setBackground(new java.awt.Color(255, 255, 255, 180));
-        CurrencyComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
-        CurrencyComboBox4.setOpaque(false);
-
-        jLabel16.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel16.setText("Training Data:");
-
-        trainingDataPath4.setBackground(new java.awt.Color(255, 255, 255, 180));
-        trainingDataPath4.setOpaque(false);
-
-        jToggleButton5.setText("Browse");
-        jToggleButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton5ActionPerformed(evt);
-            }
-        });
-
-        doneButton6.setText("Forecast");
-        doneButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                doneButton6ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
-        jPanel14.setLayout(jPanel14Layout);
-        jPanel14Layout.setHorizontalGroup(
-            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel14Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(CurrencyComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(trainingDataPath4, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jToggleButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(doneButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
-        );
-        jPanel14Layout.setVerticalGroup(
-            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel14Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(CurrencyComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16)
-                    .addComponent(trainingDataPath4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton5)
-                    .addComponent(doneButton6))
-                .addContainerGap(22, Short.MAX_VALUE))
-        );
-
-        jScrollPane2.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jScrollPane2.setEnabled(false);
-        jScrollPane2.setFocusable(false);
-        jScrollPane2.setOpaque(false);
-
-        jTable2.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Date", "Input", "Expected Output", "Actual Output"
-            }
-        ));
-        jTable2.setEnabled(false);
-        jTable2.setFocusable(false);
-        jTable2.setOpaque(false);
-        jTable2.setRequestFocusEnabled(false);
-        jScrollPane2.setViewportView(jTable2);
-
-        jPanel6.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jPanel6.setOpaque(false);
-
-        doneButton7.setText("Train NN");
-        doneButton7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                doneButton7MouseClicked(evt);
-            }
-        });
-        doneButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                doneButton7ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(doneButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(doneButton7)
-                .addContainerGap())
-        );
-
-        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
-        jLabel2.setText("Recurrent Neural Network");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(237, 237, 237)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 677, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
-        );
-
-        jTabbedPane1.addTab("Recurrent Neural Network", jPanel4);
+        jTabbedPane1.addTab("          Forecast          ", jPanel8);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1407,29 +1382,6 @@ public class MainUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_doneButton2ActionPerformed
 
-    private void jToggleButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jToggleButton5ActionPerformed
-
-    private void doneButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_doneButton6ActionPerformed
-
-    private void doneButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_doneButton7ActionPerformed
-
-    private void jTextArea4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseClicked
-        // TODO add your handling code here:
-        jTabbedPane1.setSelectedIndex(1);
-    }//GEN-LAST:event_jTextArea4MouseClicked
-
-    private void jTextArea3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea3MouseClicked
-        // TODO add your handling code here:
-                jTabbedPane1.setSelectedIndex(2);
-
-    }//GEN-LAST:event_jTextArea3MouseClicked
-
     private void doneButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_doneButton1MouseClicked
         // TODO add your handling code here:
         if(algo == 1)
@@ -1441,21 +1393,27 @@ public class MainUI extends javax.swing.JFrame {
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
         // TODO add your handling code here:
-
-/*        testLabel.setText("Processing...");
-
-        int i = CurrencyComboBox1.getSelectedIndex();
-
-        int inputNodes = (Integer) inputNeurons.getValue();
-        int hiddenNodes = (Integer) hiddenNeurons.getValue();
-        int outputNodes = (Integer) outputNeurons.getValue();
-        String fileLocation =  filePath.getText();
-        //testLabel.setText("" + ans);
-
-       // FFNeuralNetwork nn = new FFNeuralNetwork(inputNodes, hiddenNodes, outputNodes,i+1 , false);
-        int maxRuns = 5000;
+        
+        submitBtn.setEnabled(false);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        
         double minErrorCondition = 0.01;
-        testLabel.setText("Done!!");*/
+
+        NNData data = new NNData();
+
+        data.setCurrency(fCurrencyComboBox.getSelectedIndex()+1);
+        data.setInputNeurons((Integer) inputNeurons.getValue());
+        data.setHiddenNeurons((Integer) hiddenNeurons.getValue());
+        data.setOutputNeurons((Integer) fOutputNeurons.getValue());
+        data.setFilePath(filePath.getText());
+        data.setEpoch((Integer) epochInput.getValue());
+        data.setMinError(minErrorCondition);
+        data.setContext(this);
+        
+        FFTrain task = new FFTrain(data);
+        task.addPropertyChangeListener(new MyfnnListener());
+        task.execute();        
+        
     }//GEN-LAST:event_submitBtnActionPerformed
 
     private void filePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePathActionPerformed
@@ -1463,68 +1421,77 @@ public class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_filePathActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        // FileChoose f = new FileChoose();
-        // f.setVisible(true);
+        filePath.setText(chooseFile());
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private String chooseFile(){
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            filePath.setText(file.getAbsolutePath());
-            //try {
-                //What to do with the file, e.g. display it in a TextArea
-                // textarea.read( new FileReader( file.getAbsolutePath() ), null );
-
-                //} catch (IOException ex) {
-                // System.out.println("problem accessing file"+file.getAbsolutePath());
-                //}
+            return file.getAbsolutePath();
         } else {
             System.out.println("File access cancelled by user.");
-        }
-
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void CurrencyComboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CurrencyComboBox5ActionPerformed
+            return "";
+        }        
+    }
+    
+    private void fCurrencyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fCurrencyComboBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_CurrencyComboBox5ActionPerformed
+    }//GEN-LAST:event_fCurrencyComboBoxActionPerformed
 
-    private void doneButton7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_doneButton7MouseClicked
+    private void finishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishBtnActionPerformed
         // TODO add your handling code here:
-        jFrame2.setVisible(true);
-    }//GEN-LAST:event_doneButton7MouseClicked
-
-    private void submitBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtn1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_submitBtn1ActionPerformed
+        jFrame1.dispose();
+    }//GEN-LAST:event_finishBtnActionPerformed
 
     private void filePathFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_filePathFocusGained
         // TODO add your handling code here:
         filePath.selectAll();
     }//GEN-LAST:event_filePathFocusGained
 
-    private void submitBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtn2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_submitBtn2ActionPerformed
+    private void rSubmitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSubmitBtnActionPerformed
+        rSubmitBtn.setEnabled(false);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        
+        double minErrorCondition = 0.01;
 
-    private void filePath2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_filePath2FocusGained
-        // TODO add your handling code here:
-        filePath2.selectAll();
-    }//GEN-LAST:event_filePath2FocusGained
+        RecurrentData data = new RecurrentData();
+        
+        data.setCurrency(rCurrencyComboBox.getSelectedIndex()+1);
+        data.setInputNeurons((Integer) rInputNeurons.getValue());
+        data.setHiddenNeurons1((Integer) rHiddenNeurons1.getValue());
+        data.setHiddenNeurons2((Integer) rHiddenNeurons2.getValue());
+        data.setOutputNeurons((Integer) rOutputNeurons.getValue());
+        data.setFilePath(rFilePath.getText());
+        data.setEpoch((Integer)rSpinner.getValue());
+        data.setMinError(minErrorCondition);
+        data.setContext(this);
+        
+        RecurrentTrain task = new RecurrentTrain(data);
+        task.addPropertyChangeListener(new MyRnnListener());
+        task.execute();          
+    }//GEN-LAST:event_rSubmitBtnActionPerformed
 
-    private void filePath2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePath2ActionPerformed
+    private void rFilePathFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rFilePathFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_filePath2ActionPerformed
+        rFilePath.selectAll();
+    }//GEN-LAST:event_rFilePathFocusGained
+
+    private void rFilePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rFilePathActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rFilePathActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+        rFilePath.setText(chooseFile());
     }//GEN-LAST:event_jButton6ActionPerformed
 
-    private void CurrencyComboBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CurrencyComboBox7ActionPerformed
+    private void rCurrencyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rCurrencyComboBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_CurrencyComboBox7ActionPerformed
+    }//GEN-LAST:event_rCurrencyComboBoxActionPerformed
 
-    private void submitBtn5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtn5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_submitBtn5ActionPerformed
+    private void rFinishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rFinishBtnActionPerformed
+        jFrame2.dispose();
+    }//GEN-LAST:event_rFinishBtnActionPerformed
 
     private void testingDataPathMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_testingDataPathMouseClicked
         // TODO add your handling code here:
@@ -1545,6 +1512,67 @@ public class MainUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         algo = 2;
     }//GEN-LAST:event_jRadioButton2ItemStateChanged
+
+    private void testingDataPathFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_testingDataPathFocusGained
+        // TODO add your handling code here:
+        testingDataPath.selectAll();
+    }//GEN-LAST:event_testingDataPathFocusGained
+
+    private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
+        buttonGroup1.setSelected(jRadioButton1.getModel(), true);
+        algo = 1;
+        jTabbedPane1.setSelectedIndex(1);
+    }//GEN-LAST:event_jPanel4MouseClicked
+
+    private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
+        buttonGroup1.setSelected(jRadioButton2.getModel(), true);
+        algo = 2;
+        jTabbedPane1.setSelectedIndex(1);
+    }//GEN-LAST:event_jPanel6MouseClicked
+
+    private void jTextArea4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseClicked
+        buttonGroup1.setSelected(jRadioButton1.getModel(), true);
+        algo = 1;
+        jTabbedPane1.setSelectedIndex(1);
+    }//GEN-LAST:event_jTextArea4MouseClicked
+
+    private void jTextArea5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseClicked
+        buttonGroup1.setSelected(jRadioButton2.getModel(), true);
+        algo = 2;
+        jTabbedPane1.setSelectedIndex(1);
+    }//GEN-LAST:event_jTextArea5MouseClicked
+
+    private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
+        jPanel4.setBackground(new java.awt.Color(56,56,56,210));
+    }//GEN-LAST:event_jPanel4MouseEntered
+
+    private void jPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseExited
+        jPanel4.setBackground(new java.awt.Color(56,56,56,180));
+    }//GEN-LAST:event_jPanel4MouseExited
+
+    private void jTextArea4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseEntered
+        jPanel4.setBackground(new java.awt.Color(56,56,56,210));
+    }//GEN-LAST:event_jTextArea4MouseEntered
+
+    private void jTextArea4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseExited
+        jPanel4.setBackground(new java.awt.Color(56,56,56,180));
+    }//GEN-LAST:event_jTextArea4MouseExited
+
+    private void jPanel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseEntered
+        jPanel6.setBackground(new java.awt.Color(56,56,56,210));
+    }//GEN-LAST:event_jPanel6MouseEntered
+
+    private void jTextArea5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseEntered
+        jPanel6.setBackground(new java.awt.Color(56,56,56,210));
+    }//GEN-LAST:event_jTextArea5MouseEntered
+
+    private void jPanel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseExited
+        jPanel6.setBackground(new java.awt.Color(56,56,56,180));
+    }//GEN-LAST:event_jPanel6MouseExited
+
+    private void jTextArea5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseExited
+        jPanel6.setBackground(new java.awt.Color(56,56,56,180));
+    }//GEN-LAST:event_jTextArea5MouseExited
 
     private FocusListener fcsListener = new FocusListener() {
         @Override
@@ -1602,41 +1630,52 @@ public class MainUI extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 MainUI frame = new MainUI();
                 frame.setVisible(true);                
             }
         });
     }
+    
+    public void finishFnnTask(){
+        Toolkit.getDefaultToolkit().beep();
+        submitBtn.setEnabled(true);
+        finishBtn.setEnabled(true);
+        setCursor(null); //turn off the wait cursor
+    }
+    
+    public void finishRnnTask(){
+        Toolkit.getDefaultToolkit().beep();
+        rSubmitBtn.setEnabled(true);
+        rFinishBtn.setEnabled(true);
+        setCursor(null); //turn off the wait cursor
+    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> CurrencyComboBox;
-    private javax.swing.JComboBox<String> CurrencyComboBox4;
-    private javax.swing.JComboBox<String> CurrencyComboBox5;
-    private javax.swing.JComboBox<String> CurrencyComboBox7;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton doneButton1;
     private javax.swing.JButton doneButton2;
-    private javax.swing.JButton doneButton6;
-    private javax.swing.JButton doneButton7;
+    private javax.swing.JSpinner epochInput;
+    private javax.swing.JComboBox<String> fCurrencyComboBox;
+    private javax.swing.JSpinner fOutputNeurons;
     private javax.swing.JFileChooser fileChooser;
     private java.awt.TextField filePath;
-    private java.awt.TextField filePath2;
+    private javax.swing.JButton finishBtn;
     private javax.swing.JSpinner hiddenNeurons;
-    private javax.swing.JSpinner hiddenNeurons1;
-    private javax.swing.JSpinner hiddenNeurons2;
     private javax.swing.JSpinner inputNeurons;
-    private javax.swing.JSpinner inputNeurons2;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JFrame jFrame2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel23;
@@ -1647,6 +1686,8 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1658,7 +1699,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1668,29 +1708,29 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JProgressBar jProgressBar3;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
+    private javax.swing.JTextArea jTextArea5;
     private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton5;
-    private javax.swing.JSpinner outputNeurons;
-    private javax.swing.JSpinner outputNeurons2;
+    private javax.swing.JComboBox<String> rCurrencyComboBox;
+    private java.awt.TextField rFilePath;
+    private javax.swing.JButton rFinishBtn;
+    private javax.swing.JSpinner rHiddenNeurons1;
+    private javax.swing.JSpinner rHiddenNeurons2;
+    private javax.swing.JSpinner rInputNeurons;
+    private javax.swing.JSpinner rOutputNeurons;
+    private javax.swing.JProgressBar rProgressBar;
+    private javax.swing.JSpinner rSpinner;
+    private javax.swing.JButton rSubmitBtn;
     private javax.swing.JButton submitBtn;
-    private javax.swing.JButton submitBtn1;
-    private javax.swing.JButton submitBtn2;
-    private javax.swing.JButton submitBtn5;
     private javax.swing.JLabel testLabel;
     private javax.swing.JLabel testLabel1;
     private javax.swing.JTextField testingDataPath;
-    private javax.swing.JTextField trainingDataPath4;
     // End of variables declaration//GEN-END:variables
 }

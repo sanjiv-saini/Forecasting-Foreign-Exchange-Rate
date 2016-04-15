@@ -34,3 +34,51 @@ Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
 EPOCH: 5000
 Sum of squared errors = 375.16707594687057
 
+Currency: 
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 1
+Sum of squared errors = 0.0
+
+Currency: 
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 1
+Sum of squared errors = 0.0
+
+Currency: UsDollar
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 200
+Sum of squared errors = 194.75209476708386
+
+Currency: UsDollar
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 200
+Sum of squared errors = 177.66117964977693
+
+Currency: UsDollar
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 200
+Sum of squared errors = 208.5115676497811
+
+Currency: UsDollar
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 200
+Sum of squared errors = 195.36555387578895
+
+Currency: UsDollar
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 100
+Sum of squared errors = 246.5339449310026
+
+Currency: UsDollar
+PATTERN: 10 10 10 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 40
+Sum of squared errors = 274.51669290941686
+
