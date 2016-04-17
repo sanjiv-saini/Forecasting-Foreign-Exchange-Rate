@@ -566,7 +566,7 @@ public class RNNInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_actualOutputFieldActionPerformed
 
     private void forecastButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastButtonActionPerformed
-        Double output;
+      /*  Double output;
 
         RNeuralNetwork nn = new RNeuralNetwork(inputCnt, hiddenCnt1, hiddenCnt2, outputCnt,currencyCol, true);
         output = nn.testRun(inputValues);
@@ -579,7 +579,7 @@ public class RNNInterface extends javax.swing.JFrame {
             System.err.println(e);
         }
 
-        actualOutputField.setText("" + output);
+        actualOutputField.setText("" + output);*/
     }//GEN-LAST:event_forecastButtonActionPerformed
 
     private void ExpectedOutputFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpectedOutputFieldActionPerformed
@@ -591,57 +591,57 @@ public class RNNInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_inputFieldActionPerformed
 
     private void readButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readButtonActionPerformed
-        String line;
-        int flag = 1;
-
-        try {
-
-            if(inputValues == null){
-                inputValues = new ArrayList<Double>();
-                for (int i = 0; i < inputCnt; i++){
-                    if((line = bufferedReader.readLine()) != null) {
-                        // use comma as separator
-                        String[] cols = line.split(",");
-                        inputValues.add(RNeuralNetwork.normalize(Double.parseDouble(cols[currencyCol])));
-                        //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
-                    } else{
-                        flag = 0;
-                        break;
-                    }
-                }
-            } else{
-                //shift every input to left and add previous expected output to last
-                //and read expected output from next row.
-                inputValues.remove(0);
-                inputValues.add(RNeuralNetwork.normalize(expectedOutput[0]));
-            }
-
-            if(flag == 1){
-                String str;
-                str = "" + RNeuralNetwork.denormalize(inputValues.get(0));
-
-                for(Double d: inputValues){
-                    str += ", " + RNeuralNetwork.denormalize(d);
-                }
-                inputField.setText(str);
-            } else{
-                inputField.setText("ERROR");
-            }
-
-            // Read expected output to display.
-            if((line = bufferedReader.readLine()) != null){
-                String[] cols = line.split(",");
-                expectedOutput[0] = Double.parseDouble(cols[currencyCol]);
-                ExpectedOutputField.setText(cols[currencyCol]);
-            } else{
-                ExpectedOutputField.setText("ERROR");
-            }
-
-        } catch (Exception ex) {
-            Logger.getLogger(RNeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        forecastButton.setEnabled(true);
+////////        String line;
+////////        int flag = 1;
+////////
+////////        try {
+////////
+////////            if(inputValues == null){
+////////                inputValues = new ArrayList<Double>();
+////////                for (int i = 0; i < inputCnt; i++){
+////////                    if((line = bufferedReader.readLine()) != null) {
+////////                        // use comma as separator
+////////                        String[] cols = line.split(",");
+////////                        inputValues.add(RNeuralNetwork.normalize(Double.parseDouble(cols[currencyCol])));
+////////                        //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
+////////                    } else{
+////////                        flag = 0;
+////////                        break;
+////////                    }
+////////                }
+////////            } else{
+////////                //shift every input to left and add previous expected output to last
+////////                //and read expected output from next row.
+////////                inputValues.remove(0);
+////////                inputValues.add(RNeuralNetwork.normalize(expectedOutput[0]));
+////////            }
+////////
+////////            if(flag == 1){
+////////                String str;
+////////                str = "" + RNeuralNetwork.denormalize(inputValues.get(0));
+////////
+////////                for(Double d: inputValues){
+////////                    str += ", " + RNeuralNetwork.denormalize(d);
+////////                }
+////////                inputField.setText(str);
+////////            } else{
+////////                inputField.setText("ERROR");
+////////            }
+////////
+////////            // Read expected output to display.
+////////            if((line = bufferedReader.readLine()) != null){
+////////                String[] cols = line.split(",");
+////////                expectedOutput[0] = Double.parseDouble(cols[currencyCol]);
+////////                ExpectedOutputField.setText(cols[currencyCol]);
+////////            } else{
+////////                ExpectedOutputField.setText("ERROR");
+////////            }
+////////
+////////        } catch (Exception ex) {
+////////            Logger.getLogger(RNeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+////////        }
+////////
+////////        forecastButton.setEnabled(true);
     }//GEN-LAST:event_readButtonActionPerformed
 
     private void doneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButtonActionPerformed
@@ -694,13 +694,13 @@ public class RNNInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_doneButtonActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        int returnVal = fileChooser.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            trainingDataPath.setText(file.getAbsolutePath());
-        } else {
-            System.out.println("File access cancelled by user.");
-        }
+//        int returnVal = fileChooser.showOpenDialog(this);
+//        if (returnVal == JFileChooser.APPROVE_OPTION) {
+//            File file = fileChooser.getSelectedFile();
+//            trainingDataPath.setText(file.getAbsolutePath());
+//        } else {
+//            System.out.println("File access cancelled by user.");
+//        }
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     /**

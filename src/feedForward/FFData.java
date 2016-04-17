@@ -6,12 +6,13 @@
 package feedForward;
 
 import UI.MainUI;
+import java.util.List;
 
 /**
  *
  * @author sanju singh
  */
-public class NNData {
+public class FFData {
     private int currency;
     private int inputNeurons;
     private int hiddenNeurons;
@@ -20,6 +21,15 @@ public class NNData {
     private double minError;
     private String filePath;
     private MainUI context;
+    private List<Double> inputValues;
+
+    public List<Double> getInputValues() {
+        return inputValues;
+    }
+
+    public void setInputValues(List<Double> inputValues) {
+        this.inputValues = inputValues;
+    }
 
     public MainUI getContext() {
         return context;

@@ -6,6 +6,7 @@
 package recurrent;
 
 import UI.MainUI;
+import java.util.List;
 
 /**
  *
@@ -21,6 +22,16 @@ public class RecurrentData {
     private double minError;
     private String filePath;
     private MainUI context;
+    private List<Double> inputValues;
+
+    public List<Double> getInputValues() {
+        return inputValues;
+    }
+
+    public void setInputValues(List<Double> inputValues) {
+        this.inputValues = inputValues;
+    }
+
 
     public int getCurrency() {
         return currency;

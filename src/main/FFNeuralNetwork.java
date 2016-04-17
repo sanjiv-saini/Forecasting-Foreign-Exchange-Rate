@@ -53,86 +53,86 @@
 //    double output[];
 // 
 //    // for weight update all
-//    final HashMap<String, Double> weightUpdate = new HashMap<>(); //??
+////    final HashMap<String, Double> weightUpdate = new HashMap<>(); //??
 //    
-////    public FFNeuralNetwork(int input, int hidden, int output, int currencyCol, boolean isTrained) {
-////        this.layers = new int[] { input, hidden, output };
-////        this.isTrained = isTrained;
-////        this.currencyCol = currencyCol;
-////       // df = new DecimalFormat("#.0#"); //??
-////        inputs = new ArrayList<Double>();
-////        expectedOutputs = new Double[output];
-////        
-////        switch(currencyCol){
-////            case 1: currency = "UsDollar";
-////                    break;
-////            case 2: currency = "BritishPound";
-////                    break;
-////            case 3: currency = "Euro";
-////                    break;
-////            case 4: currency = "Yen";
-////                    break;          
-////        }
-//// 
-////        /**
-////         * Create all neurons and connections Connections are created in the
-////         * neuron class
-////         */
-////        for (int i = 0; i < layers.length; i++) {
-////            switch (i) {
-////                case 0:
-////                    // input layer
-////                    for (int j = 0; j < layers[i]; j++) {
-////                        Neuron neuron = new Neuron();
-////                        inputLayer.add(neuron);
-////                    }   break;
-////                case 1:
-////                    // hidden layer
-////                    for (int j = 0; j < layers[i]; j++) {
-////                        Neuron neuron = new Neuron();
-////                        neuron.addInConnectionsS(inputLayer);
-////                        neuron.addBiasConnection(bias);
-////                        hiddenLayer.add(neuron);
-////                    }   break;
-////                case 2:
-////                    // output layer
-////                    for (int j = 0; j < layers[i]; j++) {
-////                        Neuron neuron = new Neuron();
-////                        neuron.addInConnectionsS(hiddenLayer);
-////                        neuron.addBiasConnection(bias);
-////                        outputLayer.add(neuron);
-////                    }   break;
-////                default:
-////                    System.out.println("!Error NeuralNetwork init");
-////                    break;
-////            }
-////        }
-//// 
-////        // initialize random weights
-////        for (Neuron neuron : hiddenLayer) {
-////            ArrayList<Connection> connections = neuron.getAllInConnections();
-////            for (Connection conn : connections) {
-////                double newWeight = getRandom();
-////                conn.setWeight(newWeight);
-////            }
-////        }
-////        for (Neuron neuron : outputLayer) {
-////            ArrayList<Connection> connections = neuron.getAllInConnections();
-////            for (Connection conn : connections) {
-////                double newWeight = getRandom();
-////                conn.setWeight(newWeight);
-////            }
-////        }
-//// 
-////        // reset id counters
-////        Neuron.counter = 0;
-////        Connection.counter = 0;
-//// 
-////        if (isTrained) {
-////            trainedWeights();
-////            updateAllWeights();
-////        }
-////    }
+//    public FFNeuralNetwork(int input, int hidden, int output, int currencyCol, boolean isTrained) {
+//        this.layers = new int[] { input, hidden, output };
+//        this.isTrained = isTrained;
+//        this.currencyCol = currencyCol;
+//       // df = new DecimalFormat("#.0#"); //??
+//        inputs = new ArrayList<Double>();
+//        expectedOutputs = new Double[output];
+//        
+//        switch(currencyCol){
+//            case 1: currency = "UsDollar";
+//                    break;
+//            case 2: currency = "BritishPound";
+//                    break;
+//            case 3: currency = "Euro";
+//                    break;
+//            case 4: currency = "Yen";
+//                    break;          
+//        }
+// 
+//        /**
+//         * Create all neurons and connections Connections are created in the
+//         * neuron class
+//         */
+//        for (int i = 0; i < layers.length; i++) {
+//            switch (i) {
+//                case 0:
+//                    // input layer
+//                    for (int j = 0; j < layers[i]; j++) {
+//                        Neuron neuron = new Neuron();
+//                        inputLayer.add(neuron);
+//                    }   break;
+//                case 1:
+//                    // hidden layer
+//                    for (int j = 0; j < layers[i]; j++) {
+//                        Neuron neuron = new Neuron();
+//                        neuron.addInConnectionsS(inputLayer);
+//                        neuron.addBiasConnection(bias);
+//                        hiddenLayer.add(neuron);
+//                    }   break;
+//                case 2:
+//                    // output layer
+//                    for (int j = 0; j < layers[i]; j++) {
+//                        Neuron neuron = new Neuron();
+//                        neuron.addInConnectionsS(hiddenLayer);
+//                        neuron.addBiasConnection(bias);
+//                        outputLayer.add(neuron);
+//                    }   break;
+//                default:
+//                    System.out.println("!Error NeuralNetwork init");
+//                    break;
+//            }
+//        }
+// 
+//        // initialize random weights
+//        for (Neuron neuron : hiddenLayer) {
+//            ArrayList<Connection> connections = neuron.getAllInConnections();
+//            for (Connection conn : connections) {
+//                double newWeight = getRandom();
+//                conn.setWeight(newWeight);
+//            }
+//        }
+//        for (Neuron neuron : outputLayer) {
+//            ArrayList<Connection> connections = neuron.getAllInConnections();
+//            for (Connection conn : connections) {
+//                double newWeight = getRandom();
+//                conn.setWeight(newWeight);
+//            }
+//        }
+// 
+//        // reset id counters
+//        Neuron.counter = 0;
+//        Connection.counter = 0;
+// 
+//        if (isTrained) {
+//            trainedWeights();
+//            updateAllWeights();
+//        }
+//    }
 //// 
 //    // random
 ////    double getRandom() {
@@ -151,12 +151,12 @@
 ////        }
 ////    }
 // 
-//    public double[] getOutput() {
-//        double[] outputs = new double[outputLayer.size()];
-//        for (int i = 0; i < outputLayer.size(); i++)
-//            outputs[i] = outputLayer.get(i).getOutput();
-//        return outputs;
-//    }
+////    public double[] getOutput() {
+////        double[] outputs = new double[outputLayer.size()];
+////        for (int i = 0; i < outputLayer.size(); i++)
+////            outputs[i] = outputLayer.get(i).getOutput();
+////        return outputs;
+////    }
 // 
 //    /**
 //     * Calculate the output of the neural network based on the input The forward
@@ -168,7 +168,7 @@
 ////        for (Neuron n : outputLayer)
 ////            n.calculateOutput();
 ////    }
-// 
+//// 
 //    /**
 //     * all output propagate back
 //     * 
@@ -177,63 +177,63 @@
 //     *            respect to each of the weight leading into the output neurons
 //     *            bias is also updated here
 //     */
-//    public void applyBackpropagation(Double expectedOutput[]) {
-// 
-//        // error check, normalize value ]0;1[
-//    /*    for (int i = 0; i < expectedOutput.length; i++) {
-//            double d = expectedOutput[i];
-//            if (d < 0 || d > 1) {
-//                if (d < 0)
-//                    expectedOutput[i] = 0 + epsilon;
-//                else
-//                    expectedOutput[i] = 1 - epsilon;
-//            }
-//        }*/
-//    
-//        int i = 0;
-//        for (Neuron n : outputLayer) {
-//            ArrayList<Connection> connections = n.getAllInConnections();
-//            for (Connection con : connections) {
-//                double ak = n.getOutput();
-//                double ai = con.leftNeuron.getOutput();
-//                double desiredOutput = expectedOutput[i];
-//                
-//                double partialDerivative = ak * (1 - ak)
-//                        * (desiredOutput - ak);
-//                double deltaWeight = learningRate * partialDerivative * ai;
-//                double newWeight = con.getWeight() + deltaWeight;
-//                con.setDeltaWeight(deltaWeight);
-//                con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
-//            }
-//            i++;
-//        }
-// 
-//        // update weights for the hidden layer
-//        for (Neuron n : hiddenLayer) {
-//            double aj = n.getOutput();
-//            double sumKoutputs = 0;
-//            int j = 0;
-//            for (Neuron out_neu : outputLayer) {
-//                double wjk = out_neu.getConnection(n.id).getWeight();
-//                double desiredOutput = (double) expectedOutput[j];
-//                double ak = out_neu.getOutput();
-//                j++;
-//                sumKoutputs = sumKoutputs
-//                        + ((desiredOutput - ak) * ak * (1 - ak) * wjk);
-//            }
-//            
-//            double partialDerivative = aj * (1 - aj) * sumKoutputs;
-//            
-//            ArrayList<Connection> connections = n.getAllInConnections();
-//            for (Connection con : connections) {
-//                double ai = con.leftNeuron.getOutput();                 
-//                double deltaWeight = learningRate * partialDerivative * ai;
-//                double newWeight = con.getWeight() + deltaWeight;
-//                con.setDeltaWeight(deltaWeight);
-//                con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
-//            }
-//        }
-//    }
+////    public void applyBackpropagation(Double expectedOutput[]) {
+//// 
+////        // error check, normalize value ]0;1[
+////    /*    for (int i = 0; i < expectedOutput.length; i++) {
+////            double d = expectedOutput[i];
+////            if (d < 0 || d > 1) {
+////                if (d < 0)
+////                    expectedOutput[i] = 0 + epsilon;
+////                else
+////                    expectedOutput[i] = 1 - epsilon;
+////            }
+////        }*/
+////    
+////        int i = 0;
+////        for (Neuron n : outputLayer) {
+////            ArrayList<Connection> connections = n.getAllInConnections();
+////            for (Connection con : connections) {
+////                double ak = n.getOutput();
+////                double ai = con.leftNeuron.getOutput();
+////                double desiredOutput = expectedOutput[i];
+////                
+////                double partialDerivative = ak * (1 - ak)
+////                        * (desiredOutput - ak);
+////                double deltaWeight = learningRate * partialDerivative * ai;
+////                double newWeight = con.getWeight() + deltaWeight;
+////                con.setDeltaWeight(deltaWeight);
+////                con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
+////            }
+////            i++;
+////        }
+//// 
+////        // update weights for the hidden layer
+////        for (Neuron n : hiddenLayer) {
+////            double aj = n.getOutput();
+////            double sumKoutputs = 0;
+////            int j = 0;
+////            for (Neuron out_neu : outputLayer) {
+////                double wjk = out_neu.getConnection(n.id).getWeight();
+////                double desiredOutput = (double) expectedOutput[j];
+////                double ak = out_neu.getOutput();
+////                j++;
+////                sumKoutputs = sumKoutputs
+////                        + ((desiredOutput - ak) * ak * (1 - ak) * wjk);
+////            }
+////            
+////            double partialDerivative = aj * (1 - aj) * sumKoutputs;
+////            
+////            ArrayList<Connection> connections = n.getAllInConnections();
+////            for (Connection con : connections) {
+////                double ai = con.leftNeuron.getOutput();                 
+////                double deltaWeight = learningRate * partialDerivative * ai;
+////                double newWeight = con.getWeight() + deltaWeight;
+////                con.setDeltaWeight(deltaWeight);
+////                con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
+////            }
+////        }
+////    }
 // 
 //  /*  public void run(int maxSteps, double minError, String fileName) throws FileNotFoundException, IOException {
 //        int i;
@@ -318,11 +318,11 @@
 //    }*/
 //    
 //    
-//    public Double testRun(List<Double> input){
-//        setInput(input);
-//        activate();
-//        return (denormalize(getOutput()[0]));
-//    }
+////    public Double testRun(List<Double> input){
+////        setInput(input);
+////        activate();
+////        return (denormalize(getOutput()[0]));
+////    }
 //    
 ////    private boolean readInputOutput(Iterator<String> dataListItr){
 ////        String line;
@@ -366,51 +366,51 @@
 ////        return true;       
 ////    }
 //    
-//    public static Double normalize(Double d){
-//        Double normY;
-//        double max = 110, min = 0;
-//        switch(currencyCol){
-//           case 1: max = 69;
-//                    min = 39;
-//                    break;
-//            case 2: max = 107;
-//                    min = 63;
-//                    break;
-//            case 3: max = 92;
-//                    min = 38;
-//                    break;
-//            case 4: max = 73;
-//                    min = 29;
-//                    break;    
-//        }
-//        
-//        normY = (((d - min)/(max - min) )*(0.9 - 0.1)) + 0.1;
-//        return normY;
-//    }
-//    
-//    public static double denormalize(Double d){
-//        Double denormY;
-//        
-//        double max = 110, min = 0;
-//        switch(currencyCol){
-//            case 1: max = 69;
-//                    min = 39;
-//                    break;
-//            case 2: max = 107;
-//                    min = 63;
-//                    break;
-//            case 3: max = 92;
-//                    min = 38;
-//                    break;
-//            case 4: max = 73;
-//                    min = 29;
-//                    break;    
-//        }
-//        
-//        denormY = (((d - 0.1)/(0.9 - 0.1) )*(max - min)) + min;
-//        return denormY;        
-//    }   
-//    
+////    public static Double normalize(Double d){
+////        Double normY;
+////        double max = 110, min = 0;
+////        switch(currencyCol){
+////           case 1: max = 69;
+////                    min = 39;
+////                    break;
+////            case 2: max = 107;
+////                    min = 63;
+////                    break;
+////            case 3: max = 92;
+////                    min = 38;
+////                    break;
+////            case 4: max = 73;
+////                    min = 29;
+////                    break;    
+////        }
+////        
+////        normY = (((d - min)/(max - min) )*(0.9 - 0.1)) + 0.1;
+////        return normY;
+////    }
+////    
+////    public static double denormalize(Double d){
+////        Double denormY;
+////        
+////        double max = 110, min = 0;
+////        switch(currencyCol){
+////            case 1: max = 69;
+////                    min = 39;
+////                    break;
+////            case 2: max = 107;
+////                    min = 63;
+////                    break;
+////            case 3: max = 92;
+////                    min = 38;
+////                    break;
+////            case 4: max = 73;
+////                    min = 29;
+////                    break;    
+////        }
+////        
+////        denormY = (((d - 0.1)/(0.9 - 0.1) )*(max - min)) + min;
+////        return denormY;        
+////    }   
+////    
 //         
 ////    private String getOutputString(){
 ////        
@@ -429,60 +429,60 @@
 //    /**
 //     * Take from hash table and put into all weights
 //     */
-//    public void updateAllWeights() {
-//        // update weights for the output layer
-//        for (Neuron n : outputLayer) {
-//            ArrayList<Connection> connections = n.getAllInConnections();
-//            for (Connection con : connections) {
-//                String key = weightKey(n.id, con.id);
-//                double newWeight = weightUpdate.get(key);
-//                con.setWeight(newWeight);
-//            }
-//        }
-//        // update weights for the hidden layer
-//        for (Neuron n : hiddenLayer) {
-//            ArrayList<Connection> connections = n.getAllInConnections();
-//            for (Connection con : connections) {
-//                String key = weightKey(n.id, con.id);
-//                double newWeight = weightUpdate.get(key);
-//                con.setWeight(newWeight);
-//            }
-//        }
-//    }
-// 
-//    // trained data
-//    void trainedWeights() {
-//        weightUpdate.clear();
-//        String line;
-//        BufferedReader br = null;
-//        Integer n, c;
-//        Double w;
-//        File file = new File("FFresource/" + currency + ".csv");
-//        try {
-//            
-//             br = new BufferedReader(new FileReader(file));
-//             //for removing the input,hidden,output neurons count.
-//             br.readLine();
-//             
-//             while((line = br.readLine()) != null){
-//               String[] cols = line.split(",");
-//               n = Integer.parseInt(cols[0]);
-//               c = Integer.parseInt(cols[1]);
-//               w = Double.parseDouble(cols[2]);
-//               
-//               weightUpdate.put(weightKey(n, c), w);
-//           } 
-//            
-//        } catch (Exception ex) {
-//            Logger.getLogger(FFNeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
-//        } finally{
-//            try {
-//                br.close();
-//            } catch (IOException ex) {
-//                Logger.getLogger(FFNeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//    }
+////    public void updateAllWeights() {
+////        // update weights for the output layer
+////        for (Neuron n : outputLayer) {
+////            ArrayList<Connection> connections = n.getAllInConnections();
+////            for (Connection con : connections) {
+////                String key = weightKey(n.id, con.id);
+////                double newWeight = weightUpdate.get(key);
+////                con.setWeight(newWeight);
+////            }
+////        }
+////        // update weights for the hidden layer
+////        for (Neuron n : hiddenLayer) {
+////            ArrayList<Connection> connections = n.getAllInConnections();
+////            for (Connection con : connections) {
+////                String key = weightKey(n.id, con.id);
+////                double newWeight = weightUpdate.get(key);
+////                con.setWeight(newWeight);
+////            }
+////        }
+////    }
+//// 
+////    // trained data
+////    void trainedWeights() {
+////        weightUpdate.clear();
+////        String line;
+////        BufferedReader br = null;
+////        Integer n, c;
+////        Double w;
+////        File file = new File("FFresource/" + currency + ".csv");
+////        try {
+////            
+////             br = new BufferedReader(new FileReader(file));
+////             //for removing the input,hidden,output neurons count.
+////             br.readLine();
+////             
+////             while((line = br.readLine()) != null){
+////               String[] cols = line.split(",");
+////               n = Integer.parseInt(cols[0]);
+////               c = Integer.parseInt(cols[1]);
+////               w = Double.parseDouble(cols[2]);
+////               
+////               weightUpdate.put(weightKey(n, c), w);
+////           } 
+////            
+////        } catch (Exception ex) {
+////            Logger.getLogger(FFNeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+////        } finally{
+////            try {
+////                br.close();
+////            } catch (IOException ex) {
+////                Logger.getLogger(FFNeuralNetwork.class.getName()).log(Level.SEVERE, null, ex);
+////            }
+////        }
+////    }
 // 
 ////    public void printWeightUpdate(){
 ////        

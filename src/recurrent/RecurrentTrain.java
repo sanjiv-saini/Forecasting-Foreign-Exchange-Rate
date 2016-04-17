@@ -76,16 +76,7 @@ public class RecurrentTrain extends SwingWorker<Void, Void>{
         inputs = new ArrayList<Double>();
         expectedOutputs = new Double[rData.getOutputNeurons()];
         
-        switch(currencyCol){
-            case 1: currency = "UsDollar";
-                    break;
-            case 2: currency = "BritishPound";
-                    break;
-            case 3: currency = "Euro";
-                    break;
-            case 4: currency = "Yen";
-                    break;          
-        }
+        currency = Utility.getCurrency(currencyCol);
         
         constructRNN();
         

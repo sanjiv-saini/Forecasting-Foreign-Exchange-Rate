@@ -62,7 +62,7 @@ public class FFTrain extends SwingWorker<Void, Void> {
     
     
     
-    public FFTrain(NNData nnData){
+    public FFTrain(FFData nnData){
         
         this.layers = new int[] { nnData.getInputNeurons(), nnData.getHiddenNeurons(), nnData.getOutputNeurons() };
         this.currencyCol = nnData.getCurrency();
@@ -74,18 +74,8 @@ public class FFTrain extends SwingWorker<Void, Void> {
         inputs = new ArrayList<Double>();
         expectedOutputs = new Double[nnData.getOutputNeurons()];
         
+        currency = Utility.getCurrency(currencyCol);
         
-        switch(currencyCol){
-            case 1: currency = "UsDollar";
-                    break;
-            case 2: currency = "BritishPound";
-                    break;
-            case 3: currency = "Euro";
-                    break;
-            case 4: currency = "Yen";
-                    break;          
-        }
- 
         /**
          * Create all neurons and connections Connections are created in the
          * neuron class

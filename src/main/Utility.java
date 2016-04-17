@@ -1,5 +1,6 @@
 package main;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 /*
@@ -64,4 +65,25 @@ public class Utility {
         denormY = (((d - 0.1)/(0.9 - 0.1) )*(max - min)) + min;
         return denormY;        
     }   
+    
+    public static String getCurrency(int col){
+        String currency;
+        switch(col){
+            case 0: currency = "UsDollar";
+            break;
+            case 1: currency = "BritishPound";
+            break;
+            case 2: currency = "Euro";
+            break;
+            case 3: currency = "Yen";
+            break;
+            default: currency = "";
+        }
+        return currency;
+    }
+    
+    public static String formatDecimal(Double num){
+        DecimalFormat df = new DecimalFormat("#.0#");
+        return df.format(num);
+    }
 }
