@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.Connection;
-import main.Neuron;
-import main.Utility;
+import neuralNetwork.Connection;
+import neuralNetwork.Neuron;
+import neuralNetwork.Utility;
 
 /**
  *

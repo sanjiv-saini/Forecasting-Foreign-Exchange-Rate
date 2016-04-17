@@ -21,12 +21,9 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
-import main.Connection;
-//import main.FFNeuralNetwork;
-//import static main.FFNeuralNetwork.denormalize;
-//import static main.FFNeuralNetwork.normalize;
-import main.Neuron;
-import main.Utility;
+import neuralNetwork.Connection;
+import neuralNetwork.Neuron;
+import neuralNetwork.Utility;
 
 /**
  *

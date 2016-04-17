@@ -51,7 +51,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
-import main.Utility;
+import neuralNetwork.Utility;
 import recurrent.RForecast;
 import recurrent.RecurrentData;
 import recurrent.RecurrentTrain;
