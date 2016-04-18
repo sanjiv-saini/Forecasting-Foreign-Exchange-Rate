@@ -3,20 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/main/Neuron.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/resources/alert-triangle-red-128.png</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/main/RNeuralNetwork.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/recurrent/RecurrentData.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/main/Connection.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/main/Utility.java</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/neuralNetwork/Neuron.java</file>
             <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/UI/MainUI.java</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/neuralNetwork/Utility.java</file>
             <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/feedForward/FFTrain.java</file>
             <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/feedForward/FFData.java</file>
             <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/recurrent/RecurrentTrain.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/main/RNNInterface.java</file>
             <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/feedForward/FForecast.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/main/FFNeuralNetwork.java</file>
-            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/resources/alert-triangle-yellow-128.png</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/recurrent/RForecast.java</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/neuralNetwork/Connection.java</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/recurrent/RecurrentData.java</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/resources/ic_info_outline_white_18dp_1x.png</file>
+            <file>file:/C:/Users/sanju%20singh/Documents/NetBeansProjects/ExchangeRateForecast/src/resources/alert-triangle-red-128%20-%20Copy.png</file>
         </group>
     </open-files>
 </project-private>

@@ -5,6 +5,7 @@ import feedForward.FFData;
 import feedForward.FForecast;
 //import main.FFNeuralNetwork;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 //import sun.awt.image.ToolkitImage;
@@ -30,15 +31,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -48,8 +54,13 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
+import javax.swing.event.CellEditorListener;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 import neuralNetwork.Utility;
 import recurrent.RForecast;
@@ -83,8 +94,14 @@ public class MainUI extends javax.swing.JFrame {
     
     
     public MainUI() {
-        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
-        initComponents();
+        try {
+            this.iconImage = ImageIO.read(getClass().getResource("/resources/icon.png"));
+            
+            setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+            initComponents();
+        } catch (IOException ex) {
+            Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     class MyCustomFilter extends javax.swing.filechooser.FileFilter {
@@ -130,6 +147,7 @@ public class MainUI extends javax.swing.JFrame {
     
     static MyOwnFocusTraversalPolicy newPolicy;
     private int algo = 1;
+    Image iconImage;
 
 
     /**
@@ -155,24 +173,16 @@ public class MainUI extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         hiddenNeurons = new javax.swing.JSpinner();
-        JFormattedTextField format2 = ((JSpinner.DefaultEditor) hiddenNeurons.getEditor()).getTextField();
-        format2.addFocusListener(fcsListener);
         jLabel5 = new javax.swing.JLabel();
         fOutputNeurons = new javax.swing.JSpinner();
-        JFormattedTextField format3 = ((JSpinner.DefaultEditor) fOutputNeurons.getEditor()).getTextField();
-        format3.addFocusListener(fcsListener);
         jLabel23 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         inputNeurons = new javax.swing.JSpinner();
-        JFormattedTextField format1 = ((JSpinner.DefaultEditor) inputNeurons.getEditor()).getTextField();
-        format1.addFocusListener(fcsListener);
         jProgressBar1 = new JProgressBar(0, 100);
         finishBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         epochInput = new javax.swing.JSpinner();
-        JFormattedTextField format0 = ((JSpinner.DefaultEditor) epochInput.getEditor()).getTextField();
-        format0.addFocusListener(fcsListener);
         jLabel31 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jFrame2 = new javax.swing.JFrame();
@@ -188,36 +198,20 @@ public class MainUI extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         rHiddenNeurons1 = new javax.swing.JSpinner();
-        JFormattedTextField format5 = ((JSpinner.DefaultEditor) rHiddenNeurons1.getEditor()).getTextField();
-        format5.addFocusListener(fcsListener);
         jLabel12 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
         rInputNeurons = new javax.swing.JSpinner();
-        JFormattedTextField format4 = ((JSpinner.DefaultEditor) rInputNeurons.getEditor()).getTextField();
-        format4.addFocusListener(fcsListener);
         rOutputNeurons = new javax.swing.JSpinner();
-        JFormattedTextField format7 = ((JSpinner.DefaultEditor) rOutputNeurons.getEditor()).getTextField();
-        format7.addFocusListener(fcsListener);
         rHiddenNeurons2 = new javax.swing.JSpinner();
-        JFormattedTextField format6 = ((JSpinner.DefaultEditor) rHiddenNeurons2.getEditor()).getTextField();
-        format6.addFocusListener(fcsListener);
         rProgressBar = new javax.swing.JProgressBar();
         rFinishBtn = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         rSpinner = new javax.swing.JSpinner();
-        JFormattedTextField format8 = ((JSpinner.DefaultEditor) rSpinner.getEditor()).getTextField();
-        format8.addFocusListener(fcsListener);
         jLabel30 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         buttonGroup1 = new javax.swing.ButtonGroup();
-        DialogBox = new javax.swing.JDialog();
-        jPanel14 = new javax.swing.JPanel();
-        errorString = new javax.swing.JTextArea();
-        jPanel15 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jLabel15 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel1 = new JPanel()
         {
@@ -326,15 +320,24 @@ public class MainUI extends javax.swing.JFrame {
                 super.paintComponent(g);
             }
         };
-        forecastTable = new JTable()
+        Caret caret = new DefaultCaret()
         {
-            protected void paintComponent(Graphics g)
+            public void focusGained(FocusEvent e)
             {
-                g.setColor( getBackground() );
-                g.fillRect(0, 0, getWidth(), getHeight());
-                super.paintComponent(g);
+                setVisible(true);
+                setSelectionVisible(true);
             }
         };
+        caret.setBlinkRate( UIManager.getInt("TextField.caretBlinkRate") );
+
+        JTextField textField = new JTextField();
+        textField.setEditable(false);
+        textField.setCaret(caret);
+        //textField.setBorder(new LineBorder(Color.BLACK));
+        // textField.setBackground(Color.BLUE);
+
+        DefaultCellEditor dce = new DefaultCellEditor( textField );
+        forecastTable = new JTable();
         jPanel12 = new JPanel()
         {
             protected void paintComponent(Graphics g)
@@ -364,6 +367,7 @@ public class MainUI extends javax.swing.JFrame {
         jFrame1.setTitle("Train Feed Forward Neural Network");
         jFrame1.setBackground(new java.awt.Color(102, 102, 102));
         jFrame1.setFocusTraversalPolicyProvider(true);
+        jFrame1.setIconImage(iconImage);
         jFrame1.setResizable(false);
         jFrame1.setSize(new java.awt.Dimension(580, 420));
 
@@ -430,30 +434,41 @@ public class MainUI extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(240, 240, 240));
         jLabel4.setText("Hidden Layer:");
 
+        hiddenNeurons.setModel(new javax.swing.SpinnerNumberModel(1, 1, 500, 1));
+        JFormattedTextField format2 = ((JSpinner.DefaultEditor) hiddenNeurons.getEditor()).getTextField();
+        format2.addFocusListener(fcsListener);
         hiddenNeurons.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         hiddenNeurons.setOpaque(false);
 
         jLabel5.setForeground(new java.awt.Color(240, 240, 240));
         jLabel5.setText("Output Layer:");
 
+        fOutputNeurons.setModel(new javax.swing.SpinnerNumberModel(1, null, null, 1));
+        JFormattedTextField format3 = ((JSpinner.DefaultEditor) fOutputNeurons.getEditor()).getTextField();
+        format3.addFocusListener(fcsListener);
+        fOutputNeurons.setEnabled(false);
         fOutputNeurons.setOpaque(false);
 
         jLabel23.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel23.setForeground(new java.awt.Color(255, 153, 102));
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel23.setToolTipText("<html>Enter number of neurons in input layer<br>equal to number of input.</html>");
+        jLabel23.setToolTipText("<html>Enter number of neurons in input layer<br>equal to number of input.<br>Range 1 - 500</html>");
         jLabel23.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel24.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel24.setForeground(new java.awt.Color(255, 153, 102));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel24.setToolTipText("<html>Enter number of neurons in<br> hidden layer of neural network.</html>");
+        jLabel24.setToolTipText("<html>Enter number of neurons in<br> hidden layer of neural network.<br>Range 1 - 500</html>");
 
         jLabel25.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel25.setForeground(new java.awt.Color(255, 153, 102));
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel25.setToolTipText("<html>Enter number of neurons in output layer<br> of NN, equal to number of output.</html>");
+        jLabel25.setToolTipText("<html>Number of neurons in output layer<br> of NN, equal to number of output.</html>");
 
+        inputNeurons.setModel(new javax.swing.SpinnerNumberModel(1, 1, 500, 1));
+        JFormattedTextField format1 = ((JSpinner.DefaultEditor) inputNeurons.getEditor()).getTextField();
+        format1.addFocusListener(fcsListener);
+        inputNeurons.setToolTipText("");
         inputNeurons.setOpaque(false);
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
@@ -523,12 +538,15 @@ public class MainUI extends javax.swing.JFrame {
         jLabel1.setLabelFor(epochInput);
         jLabel1.setText("Number of Epoch");
 
+        epochInput.setModel(new javax.swing.SpinnerNumberModel(500, 1, 50000, 500));
+        JFormattedTextField format0 = ((JSpinner.DefaultEditor) epochInput.getEditor()).getTextField();
+        format0.addFocusListener(fcsListener);
         epochInput.setOpaque(false);
 
         jLabel31.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel31.setForeground(new java.awt.Color(255, 153, 102));
         jLabel31.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel31.setToolTipText("<html>Number of Iteration to train over training data.</html>");
+        jLabel31.setToolTipText("<html>Number of Iteration to train over training data.<br>Range 1 - 50,000</html>");
         jLabel31.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel14.setForeground(new java.awt.Color(255, 255, 255));
@@ -628,21 +646,10 @@ public class MainUI extends javax.swing.JFrame {
         jFrame2.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jFrame2.setTitle("Train Recurrent Neural Network");
         jFrame2.setBackground(new java.awt.Color(102, 102, 102));
+        jFrame2.setIconImage(iconImage);
         jFrame2.setResizable(false);
         jFrame2.setSize(new java.awt.Dimension(601, 460));
 
-        Vector<Component> order = new Vector<Component>(10);
-        order.add(rCurrencyComboBox);
-        order.add(format8);
-        order.add(format4);
-        order.add(format5);
-        order.add(format6);
-        order.add(format7);
-        order.add(rFilePath);
-        order.add(jButton6);
-        order.add(rSubmitBtn);
-
-        newPolicy = new MyOwnFocusTraversalPolicy(order);
         jPanel7.setBackground(new java.awt.Color(51, 51, 51));
         jPanel7.setAlignmentX(0.0F);
         jPanel7.setAlignmentY(0.0F);
@@ -706,6 +713,9 @@ public class MainUI extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(240, 240, 240));
         jLabel11.setText("Hidden Layer:");
 
+        rHiddenNeurons1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 500, 1));
+        JFormattedTextField format5 = ((JSpinner.DefaultEditor) rHiddenNeurons1.getEditor()).getTextField();
+        format5.addFocusListener(fcsListener);
         rHiddenNeurons1.setNextFocusableComponent(rHiddenNeurons2);
         rHiddenNeurons1.setOpaque(false);
 
@@ -715,25 +725,35 @@ public class MainUI extends javax.swing.JFrame {
         jLabel27.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel27.setForeground(new java.awt.Color(255, 153, 102));
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel27.setToolTipText("<html>Enter number of neurons in input layer<br>equal to number of input.</html>");
+        jLabel27.setToolTipText("<html>Enter number of neurons in input layer<br>equal to number of input.<br>Range 1 - 500</html>");
         jLabel27.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel28.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel28.setForeground(new java.awt.Color(255, 153, 102));
         jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel28.setToolTipText("<html>Enter number of neurons in<br> hidden layer of neural network.</html>");
+        jLabel28.setToolTipText("<html>Enter number of neurons in<br> hidden layer of neural network.<br>Range 1 - 500</html>");
 
         jLabel29.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel29.setForeground(new java.awt.Color(255, 153, 102));
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel29.setToolTipText("<html>Enter number of neurons in output layer<br> of NN, equal to number of output.</html>");
+        jLabel29.setToolTipText("<html>Number of neurons in output layer<br> of NN, equal to number of output.</html>");
 
+        rInputNeurons.setModel(new javax.swing.SpinnerNumberModel(1, 1, 500, 1));
+        JFormattedTextField format4 = ((JSpinner.DefaultEditor) rInputNeurons.getEditor()).getTextField();
+        format4.addFocusListener(fcsListener);
         rInputNeurons.setNextFocusableComponent(rHiddenNeurons1);
         rInputNeurons.setOpaque(false);
 
+        rOutputNeurons.setModel(new javax.swing.SpinnerNumberModel(1, null, null, 1));
+        JFormattedTextField format7 = ((JSpinner.DefaultEditor) rOutputNeurons.getEditor()).getTextField();
+        format7.addFocusListener(fcsListener);
+        rOutputNeurons.setEnabled(false);
         rOutputNeurons.setNextFocusableComponent(rFilePath);
         rOutputNeurons.setOpaque(false);
 
+        rHiddenNeurons2.setModel(new javax.swing.SpinnerNumberModel(1, 1, 500, 1));
+        JFormattedTextField format6 = ((JSpinner.DefaultEditor) rHiddenNeurons2.getEditor()).getTextField();
+        format6.addFocusListener(fcsListener);
         rHiddenNeurons2.setNextFocusableComponent(rOutputNeurons);
         rHiddenNeurons2.setOpaque(false);
 
@@ -808,12 +828,15 @@ public class MainUI extends javax.swing.JFrame {
         jLabel2.setLabelFor(rSpinner);
         jLabel2.setText("Number of Epoch");
 
+        rSpinner.setModel(new javax.swing.SpinnerNumberModel(500, 1, 50000, 500));
+        JFormattedTextField format8 = ((JSpinner.DefaultEditor) rSpinner.getEditor()).getTextField();
+        format8.addFocusListener(fcsListener);
         rSpinner.setOpaque(false);
 
         jLabel30.setFont(new java.awt.Font("Kartika", 1, 11)); // NOI18N
         jLabel30.setForeground(new java.awt.Color(255, 153, 102));
         jLabel30.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ic_info_outline_white_18dp_1x.png"))); // NOI18N
-        jLabel30.setToolTipText("<html>Number of Iteration to train over training data.</html>");
+        jLabel30.setToolTipText("<html>Number of Iteration to train over training data.<br>Range 1 - 50,000</html>");
         jLabel30.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel13.setForeground(new java.awt.Color(255, 255, 255));
@@ -917,93 +940,24 @@ public class MainUI extends javax.swing.JFrame {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
 
+        Vector<Component> order = new Vector<Component>(10);
+        order.add(rCurrencyComboBox);
+        order.add(format8);
+        order.add(format4);
+        order.add(format5);
+        order.add(format6);
+        order.add(rFilePath);
+        order.add(jButton6);
+        order.add(rSubmitBtn);
+
+        newPolicy = new MyOwnFocusTraversalPolicy(order);
+        jPanel7.setFocusTraversalPolicy(newPolicy);
+
         jFrame2.setLocationRelativeTo(null);
-
-        DialogBox.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        DialogBox.setTitle("Error");
-        DialogBox.setFocusCycleRoot(false);
-        DialogBox.setFocusableWindowState(false);
-        DialogBox.setIconImage(null);
-        DialogBox.setIconImages(null);
-        DialogBox.setResizable(false);
-        DialogBox.setSize(new java.awt.Dimension(334, 170));
-        DialogBox.setType(java.awt.Window.Type.POPUP);
-
-        jPanel14.setBackground(new java.awt.Color(255, 255, 255));
-
-        errorString.setEditable(false);
-        errorString.setColumns(20);
-        errorString.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
-        errorString.setLineWrap(true);
-        errorString.setRows(5);
-        errorString.setText("file can not be found\n");
-
-        jButton1.setText("OK");
-        jButton1.setOpaque(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
-        jPanel15.setLayout(jPanel15Layout);
-        jPanel15Layout.setHorizontalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
-        );
-        jPanel15Layout.setVerticalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel15Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/alert-triangle-red-128 - Copy.png"))); // NOI18N
-
-        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
-        jPanel14.setLayout(jPanel14Layout);
-        jPanel14Layout.setHorizontalGroup(
-            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel14Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel15)
-                .addGap(18, 18, 18)
-                .addComponent(errorString, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addComponent(jPanel15, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel14Layout.setVerticalGroup(
-            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel14Layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel15)
-                    .addComponent(errorString, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        javax.swing.GroupLayout DialogBoxLayout = new javax.swing.GroupLayout(DialogBox.getContentPane());
-        DialogBox.getContentPane().setLayout(DialogBoxLayout);
-        DialogBoxLayout.setHorizontalGroup(
-            DialogBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        DialogBoxLayout.setVerticalGroup(
-            DialogBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-
-        DialogBox.setLocationRelativeTo(null);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Exchange Rate Forecast");
-        setIconImages(null);
+        setIconImage(iconImage);
 
         jPanel1.setOpaque(false);
         jPanel1.setPreferredSize(new java.awt.Dimension(1360, 610));
@@ -1315,7 +1269,7 @@ public class MainUI extends javax.swing.JFrame {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1331,18 +1285,28 @@ public class MainUI extends javax.swing.JFrame {
         forecastTable.setGridColor(new java.awt.Color(153, 153, 153));
         forecastTable.setIntercellSpacing(new java.awt.Dimension(20, 10));
         forecastTable.setRowHeight(25);
+        forecastTable.getTableHeader().setResizingAllowed(false);
         forecastTable.getTableHeader().setReorderingAllowed(false);
+        forecastTable.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                forecastTableFocusLost(evt);
+            }
+        });
         jScrollPane1.setViewportView(forecastTable);
         if (forecastTable.getColumnModel().getColumnCount() > 0) {
             forecastTable.getColumnModel().getColumn(0).setMinWidth(150);
             forecastTable.getColumnModel().getColumn(0).setPreferredWidth(150);
             forecastTable.getColumnModel().getColumn(0).setMaxWidth(150);
-            forecastTable.getColumnModel().getColumn(2).setMinWidth(200);
-            forecastTable.getColumnModel().getColumn(2).setPreferredWidth(200);
-            forecastTable.getColumnModel().getColumn(2).setMaxWidth(200);
-            forecastTable.getColumnModel().getColumn(3).setMinWidth(200);
-            forecastTable.getColumnModel().getColumn(3).setPreferredWidth(200);
-            forecastTable.getColumnModel().getColumn(3).setMaxWidth(200);
+            forecastTable.getColumnModel().getColumn(1).setMinWidth(400);
+            forecastTable.getColumnModel().getColumn(1).setPreferredWidth(400);
+            forecastTable.getColumnModel().getColumn(1).setMaxWidth(400);
+            forecastTable.getColumnModel().getColumn(1).setCellEditor(dce);
+            forecastTable.getColumnModel().getColumn(2).setMinWidth(150);
+            forecastTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+            forecastTable.getColumnModel().getColumn(2).setMaxWidth(150);
+            forecastTable.getColumnModel().getColumn(3).setMinWidth(150);
+            forecastTable.getColumnModel().getColumn(3).setPreferredWidth(150);
+            forecastTable.getColumnModel().getColumn(3).setMaxWidth(150);
         }
 
         jPanel12.setBackground(new java.awt.Color(56, 56, 56, 180));
@@ -1574,7 +1538,7 @@ public class MainUI extends javax.swing.JFrame {
                     data.setInputNeurons(inputCnt);
                     data.setHiddenNeurons(hiddenCnt);
                     data.setOutputNeurons(outputCnt);
-                    data.setCurrency(currencyCol);
+                    data.setCurrencyCol(currencyCol);
                     data.setInputValues(inputValues);
 
                     FForecast task = new FForecast(data);
@@ -1596,31 +1560,41 @@ public class MainUI extends javax.swing.JFrame {
                 }
                      
             }catch (FileNotFoundException ex) {
-                errorString.setText("File " + testDataFile.getName() + " not found !!");
-                DialogBox.setVisible(true);
+                String msg = "File " + testDataFile.getName() + " not found !!";
+                JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+                //DialogBox.setVisible(true);
                // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }catch (NumberFormatException ex) {
-                errorString.setText("Error reading "+ testDataFile.getName() +". Format is not correct !!");
-                DialogBox.setVisible(true);
+               String msg = "Error reading "+ testDataFile.getName() +".\nFormat is not correct !!";
+               JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+              //  DialogBox.setVisible(true);
                // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }catch(EOFException e){
                 System.out.println("History data file is completely read.");
             }
             
             catch (IOException ex) {
-                errorString.setText("Error reading "+ testDataFile.getName() +" !!");
-                DialogBox.setVisible(true);
+                String msg = "Error reading "+ testDataFile.getName() +" !!";
+                JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+               // DialogBox.setVisible(true);
                // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 br.close();
             }
         }catch (FileNotFoundException ex) {
-            errorString.setText("Training weights not found.\n Make sure neural network is trained !! ");
-            DialogBox.setVisible(true);
+            String msg = "Training weights not found for "+ currency +".\nMake sure neural network is trained !! ";
+            JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+            //DialogBox.setVisible(true);
             //Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         }catch (IOException ex) {
-            errorString.setText("Error reading weights file.\n Make sure neural network is trained properly !! ");
-            DialogBox.setVisible(true);
+            String msg = "Error reading weights file for "+ currency +".\nMake sure neural network is trained properly !! ";
+            JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+            //DialogBox.setVisible(true);
            // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
@@ -1669,7 +1643,7 @@ public class MainUI extends javax.swing.JFrame {
                     data.setHiddenNeurons1(hiddenCnt1);
                     data.setHiddenNeurons2(hiddenCnt2);
                     data.setOutputNeurons(outputCnt);
-                    data.setCurrency(currencyCol);
+                    data.setCurrencyCol(currencyCol);
                     data.setInputValues(inputValues);
 
                     RForecast task = new RForecast(data);
@@ -1691,30 +1665,39 @@ public class MainUI extends javax.swing.JFrame {
                 }
                      
             }catch (FileNotFoundException ex) {
-                errorString.setText("File " + testDataFile.getName() + " not found !!");
-                DialogBox.setVisible(true);
+                String msg = "File " + testDataFile.getName() + " not found !!";
+                JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
                // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }catch (NumberFormatException ex) {
-                errorString.setText("Error reading "+ testDataFile.getName() +". Format is not correct !!");
-                DialogBox.setVisible(true);
+                String msg = "Error reading "+ testDataFile.getName() +".\nFormat is not correct !!";
+                JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+               // DialogBox.setVisible(true);
                // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }catch(EOFException e){
                 System.out.println("History data file is completely read.");
             }catch (IOException ex) {
-                errorString.setText("Error reading "+ testDataFile.getName() +" !!");
-                DialogBox.setVisible(true);
+                String msg = "Error reading "+ testDataFile.getName() +" !!";
+                JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+               // DialogBox.setVisible(true);
                // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 br.close();
             }
             
         }catch (FileNotFoundException ex) {
-            errorString.setText("Training weights not found.\n Make sure neural network is trained !! ");
-            DialogBox.setVisible(true);
+            String msg = "Training weights not found for "+ currency +".\nMake sure neural network is trained !! ";
+            JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+            //DialogBox.setVisible(true);
             //Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         }catch (IOException ex) {
-            errorString.setText("Error reading weights file.\n Make sure neural network is trained properly !! ");
-            DialogBox.setVisible(true);
+            String msg = "Error reading weights file for "+ currency +".\nMake sure neural network is trained properly !! ";
+            JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+            //DialogBox.setVisible(true);
            // Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         } 
     
@@ -1758,8 +1741,9 @@ public class MainUI extends javax.swing.JFrame {
 
         String str;
         str = "" + Utility.formatDecimal(Utility.denormalize(inputValues.get(0),currencyCol));
-
-        for(Double d: inputValues){
+        Double d;
+        for(int j=1;j<inputValues.size();j++){
+            d = inputValues.get(j);
             str += ", " + Utility.formatDecimal(Utility.denormalize(d,currencyCol));
         }
         tableRowData[INPUT_COL] = str;
@@ -1768,7 +1752,7 @@ public class MainUI extends javax.swing.JFrame {
         if((line = br.readLine()) != null){
             cols = line.split(",");
             tableRowData[EXPECTED_OUTPUT_COL] = Utility.formatDecimal(Double.parseDouble(cols[currencyCol]));
-            tableRowData[DATE_COL] = cols[5];
+            tableRowData[DATE_COL] = Utility.formatDate(cols[5]);
         } else{
             throw new EOFException();
         }
@@ -1794,7 +1778,7 @@ public class MainUI extends javax.swing.JFrame {
 
         FFData data = new FFData();
 
-        data.setCurrency(fCurrencyComboBox.getSelectedIndex()+1);
+        data.setCurrencyCol(fCurrencyComboBox.getSelectedIndex()+1);
         data.setInputNeurons((Integer) inputNeurons.getValue());
         data.setHiddenNeurons((Integer) hiddenNeurons.getValue());
         data.setOutputNeurons((Integer) fOutputNeurons.getValue());
@@ -1850,7 +1834,7 @@ public class MainUI extends javax.swing.JFrame {
 
         RecurrentData data = new RecurrentData();        
        
-        data.setCurrency(rCurrencyComboBox.getSelectedIndex()+1);
+        data.setCurrencyCol(rCurrencyComboBox.getSelectedIndex()+1);
         data.setInputNeurons((Integer) rInputNeurons.getValue());
         data.setHiddenNeurons1((Integer) rHiddenNeurons1.getValue());
         data.setHiddenNeurons2((Integer) rHiddenNeurons2.getValue());
@@ -1967,9 +1951,9 @@ public class MainUI extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(56,56,56,180));
     }//GEN-LAST:event_jTextArea5MouseExited
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        DialogBox.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void forecastTableFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_forecastTableFocusLost
+        forecastTable.getSelectionModel().clearSelection();
+    }//GEN-LAST:event_forecastTableFocusLost
 
     private FocusListener fcsListener = new FocusListener() {
         @Override
@@ -2035,30 +2019,30 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void finishFnnTask(){
-        Toolkit.getDefaultToolkit().beep();
-        submitBtn.setEnabled(true);
-        finishBtn.setEnabled(true);
-        setCursor(null); //turn off the wait cursor
+
+    public JButton getrFinishBtn() {
+        return rFinishBtn;
+    }
+
+    public JButton getrSubmitBtn() {
+        return rSubmitBtn;
     }
     
-    public void finishRnnTask(){
-        Toolkit.getDefaultToolkit().beep();
-        rSubmitBtn.setEnabled(true);
-        rFinishBtn.setEnabled(true);
-        setCursor(null); //turn off the wait cursor
+    public JButton getFinishBtn() {
+        return finishBtn;
     }
-    
+
+    public JButton getSubmitBtn() {
+        return submitBtn;
+    }
+      
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> CurrencyComboBox;
-    private javax.swing.JDialog DialogBox;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton doneButton1;
     private javax.swing.JButton doneButton2;
     private javax.swing.JSpinner epochInput;
-    private javax.swing.JTextArea errorString;
     private javax.swing.JComboBox<String> fCurrencyComboBox;
     private javax.swing.JSpinner fOutputNeurons;
     private javax.swing.JFileChooser fileChooser;
@@ -2067,7 +2051,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTable forecastTable;
     private javax.swing.JSpinner hiddenNeurons;
     private javax.swing.JSpinner inputNeurons;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private javax.swing.JFrame jFrame1;
@@ -2078,7 +2061,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel23;
@@ -2102,8 +2084,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
-    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

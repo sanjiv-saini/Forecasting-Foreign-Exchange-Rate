@@ -6,6 +6,9 @@
 package feedForward;
 
 import UI.MainUI;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,8 +21,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import neuralNetwork.Connection;
 import neuralNetwork.Neuron;
@@ -29,7 +35,7 @@ import neuralNetwork.Utility;
  *
  * @author sanju singh
  */
-public class FFTrain extends SwingWorker<Void, Void> {
+public class FFTrain extends SwingWorker<Object, Void> {
     
     private List<String> dataList = new ArrayList<>();
     final List<Double> inputs;
@@ -62,7 +68,7 @@ public class FFTrain extends SwingWorker<Void, Void> {
     public FFTrain(FFData nnData){
         
         this.layers = new int[] { nnData.getInputNeurons(), nnData.getHiddenNeurons(), nnData.getOutputNeurons() };
-        this.currencyCol = nnData.getCurrency();
+        this.currencyCol = nnData.getCurrencyCol();
         this.maxSteps = nnData.getEpoch();
         this.minError = nnData.getMinError();
         this.filePath = nnData.getFilePath();
@@ -129,17 +135,18 @@ public class FFTrain extends SwingWorker<Void, Void> {
     }
         
     @Override
-    public Void doInBackground(){
+    public Void doInBackground() throws FileNotFoundException, IOException, NumberFormatException{
        int i;
        String line;
        // Train neural network until minError reached or maxSteps exceeded
        double error = 1;
        BufferedReader br = null;
+       
+       System.out.println("NN Foreign Exchange Rate Forecasting.");
 
+       File file = new File(filePath);  
+        
        try{
-            System.out.println("NN Foreign Exchange Rate Forecasting.");
-
-            File file = new File(filePath);                
             br = new BufferedReader(new FileReader(file));
             dataList.clear();      
 
@@ -182,11 +189,13 @@ public class FFTrain extends SwingWorker<Void, Void> {
                 if((i+1) == maxSteps || error <= minError){
                     System.out.println(outputString);
                 }
-                try {
-                    br.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(FFTrain.class.getName()).log(Level.SEVERE, null, ex);
-                }
+
+            }
+            
+            try {
+                 br.close();
+            } catch (IOException ex) {
+                throw new IOException("Error closing "+ file.getName() + " !!");
             }
 
             percent = (int)((i*100)/maxSteps);
@@ -202,26 +211,48 @@ public class FFTrain extends SwingWorker<Void, Void> {
                 out.println("EPOCH: " + i);
                 out.println("Sum of squared errors = " + error + "\n");
             }catch (IOException e) {
-                    System.err.println(e);
+                System.out.println("Error storing RNN training data !!");
+                e.printStackTrace();
             }
-        
-       }catch(Exception e){
-            System.err.println(e);
-       }
+        }catch (FileNotFoundException ex) {
+                throw new FileNotFoundException("File " + file.getName() + " not found !!");
+                
+        }catch (NumberFormatException ex) {
+ 
+            throw new NumberFormatException("Error reading "+ file.getName() +".\nFormat is not correct !!");
+            
+        }catch (IOException ex) {
+            
+            throw new IOException("Error reading "+ file.getName() +" !!");
+            
+        }
 
-     //  if (i == maxSteps) {
-       //    System.out.println("!Error training try again");
-       //} else {
-        printAllWeights();
-        printWeightUpdate();
-        
         return null;
    }
     
     
     @Override
     public void done() {
-        context.finishFnnTask();
+                
+        try{ 
+
+            Toolkit.getDefaultToolkit().beep();
+            context.getSubmitBtn().setEnabled(true);
+            context.setCursor(null);
+            get();
+            printAllWeights();
+            printWeightUpdate();
+        
+            context.getFinishBtn().setEnabled(true);
+            
+        } catch (InterruptedException e) {
+                 e.getCause().printStackTrace();
+        } catch (ExecutionException e) {            
+            String msg = e.getCause().getMessage();
+            JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+            Logger.getLogger(FFTrain.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
     
    public void applyBackpropagation(Double expectedOutput[]) {
@@ -291,42 +322,35 @@ public class FFTrain extends SwingWorker<Void, Void> {
      private boolean readInputOutput(Iterator<String> dataListItr){
         String line;
                
-        try {  
-            
-                if(inputs.size() == 0){    
+        if(inputs.size() == 0){    
                       
-                for (int i = 0; i < inputLayer.size(); i++){
-                    if(dataListItr.hasNext()) {
-                        // use comma as separator
-                        line = dataListItr.next();
-                        String[] cols = line.split(",");
-                        inputs.add(Utility.normalize(Double.parseDouble(cols[currencyCol]), currencyCol));
-                        //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
-                    } else{
-                        return false;                
-                    }                
-               }
-           
-            } else{
-                //shift every input to left and add previous expected output to last
-                //and read expected output from next row.
-                inputs.remove(0);
-                inputs.add(expectedOutputs[0]);                              
-            }
-            
-            if(dataListItr.hasNext()){
-                line = dataListItr.next();
-                String[] cols = line.split(",");
-                expectedOutputs[0] = Utility.normalize(Double.parseDouble(cols[currencyCol]), currencyCol);                          
-            } else{
-                return false;
-            }    
-            
-        } catch (Exception ex) {
-            Logger.getLogger(FFTrain.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            for (int i = 0; i < inputLayer.size(); i++){
+                if(dataListItr.hasNext()) {
+                    // use comma as separator
+                    line = dataListItr.next();
+                    String[] cols = line.split(",");
+                    inputs.add(Utility.normalize(Double.parseDouble(cols[currencyCol]), currencyCol));
+                    //System.out.println("Coulmn 4= " + cols[4] + " , Column 5=" + cols[5]);
+                } else{
+                    return false;                
+                }                
+           }
+
+        } else{
+            //shift every input to left and add previous expected output to last
+            //and read expected output from next row.
+            inputs.remove(0);
+            inputs.add(expectedOutputs[0]);                              
         }
-        
+
+        if(dataListItr.hasNext()){
+            line = dataListItr.next();
+            String[] cols = line.split(",");
+            expectedOutputs[0] = Utility.normalize(Double.parseDouble(cols[currencyCol]), currencyCol);                          
+        } else{
+            return false;
+        }    
+
         return true;       
     }
      

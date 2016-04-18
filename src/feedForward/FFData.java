@@ -13,7 +13,7 @@ import java.util.List;
  * @author sanju singh
  */
 public class FFData {
-    private int currency;
+    private int currencyCol;
     private int inputNeurons;
     private int hiddenNeurons;
     private int outputNeurons;
@@ -39,12 +39,12 @@ public class FFData {
         this.context = context;
     }
 
-    public int getCurrency() {
-        return currency;
+    public int getCurrencyCol() {
+        return currencyCol;
     }
 
-    public void setCurrency(int currency) {
-        this.currency = currency;
+    public void setCurrencyCol(int currencyCol) {
+        this.currencyCol = currencyCol;
     }
 
     public int getInputNeurons() {

@@ -42,7 +42,7 @@ public class FForecast {
     public FForecast(FFData data){
         
         this.layers = new int[] { data.getInputNeurons(), data.getHiddenNeurons(), data.getOutputNeurons() };
-        this.currencyCol = data.getCurrency();
+        this.currencyCol = data.getCurrencyCol();
         this.inputValues = data.getInputValues();
         
         currency = Utility.getCurrency(currencyCol);

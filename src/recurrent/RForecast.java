@@ -48,7 +48,7 @@ public class RForecast {
     
         this.layers = new int[] { rData.getInputNeurons(), rData.getHiddenNeurons1(),
             rData.getHiddenNeurons2(), rData.getOutputNeurons() };
-        this.currencyCol = rData.getCurrency();
+        this.currencyCol = rData.getCurrencyCol();
         this.inputValues = rData.getInputValues();
         
         currency = Utility.getCurrency(currencyCol);

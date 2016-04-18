@@ -1,5 +1,6 @@
 package neuralNetwork;
 
+import java.awt.Frame;
 import java.text.DecimalFormat;
 import java.util.Random;
 
@@ -69,13 +70,13 @@ public class Utility {
     public static String getCurrency(int col){
         String currency;
         switch(col){
-            case 0: currency = "UsDollar";
+            case 1: currency = "UsDollar";
             break;
-            case 1: currency = "BritishPound";
+            case 2: currency = "BritishPound";
             break;
-            case 2: currency = "Euro";
+            case 3: currency = "Euro";
             break;
-            case 3: currency = "Yen";
+            case 4: currency = "Yen";
             break;
             default: currency = "";
         }
@@ -86,4 +87,24 @@ public class Utility {
         DecimalFormat df = new DecimalFormat("#.0#");
         return df.format(num);
     }
+    
+    public static String formatDate(String s) {
+        s = s.trim();
+        if (s == null || s.length() == 0) {
+            return s;
+        }
+        return s.substring(0, s.length()-5);
+    }
+    public static Frame getActiveFrame() { 
+        Frame result = null; 
+        Frame[] frames = Frame.getFrames(); 
+        for (int i = 0; i < frames.length; i++) { 
+         Frame frame = frames[i]; 
+         if (frame.isVisible()) { 
+          result = frame; 
+         } 
+        } 
+        return result; 
+    } 
+    
 }

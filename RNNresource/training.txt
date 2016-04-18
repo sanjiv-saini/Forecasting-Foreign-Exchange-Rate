@@ -100,3 +100,21 @@ Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
 EPOCH: 500
 Sum of squared errors = 172.99858266567176
 
+Currency: UsDollar
+PATTERN: 30 17 17 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 193.27286860425895
+
+Currency: BritishPound
+PATTERN: 30 15 15 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 526.0579390545507
+
+Currency: UsDollar
+PATTERN: 30 15 15 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 184.87527028896946
+
