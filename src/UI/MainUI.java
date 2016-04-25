@@ -5,7 +5,6 @@ import feedForward.FFData;
 import feedForward.FForecast;
 //import main.FFNeuralNetwork;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 //import sun.awt.image.ToolkitImage;
@@ -66,6 +65,7 @@ import neuralNetwork.Utility;
 import recurrent.RForecast;
 import recurrent.RecurrentData;
 import recurrent.RecurrentTrain;
+//import restApi.ApiCaller;
 
 
 /*
@@ -235,6 +235,15 @@ public class MainUI extends javax.swing.JFrame {
                 g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);  
             }  
         };  ;
+        jPanel14 = new JPanel()
+        {
+            protected void paintComponent(Graphics g)
+            {
+                g.setColor( getBackground() );
+                g.fillRect(0, 0, getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+        };
         jTextArea1 = jTextArea1 = new JTextArea()
         {
             protected void paintComponent(Graphics g)
@@ -273,12 +282,12 @@ public class MainUI extends javax.swing.JFrame {
             }
         };
         jTextArea5 = new javax.swing.JTextArea();
-        jPanel8 = new JPanel() {  
-            public void paintComponent(Graphics g) {  
-                Image img = Toolkit.getDefaultToolkit().getImage(  
-                    MainUI.class.getResource("/resources/NNImage.jpg"));  
-                g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);  
-            }  
+        jPanel8 = new JPanel() {
+            public void paintComponent(Graphics g) {
+                Image img = Toolkit.getDefaultToolkit().getImage(
+                    MainUI.class.getResource("/resources/NNImage.jpg"));
+                g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+            }
         };  ;
         jPanel10 = new JPanel()
         {
@@ -309,8 +318,8 @@ public class MainUI extends javax.swing.JFrame {
                 super.paintComponent(g);
             }
         };
-        jToggleButton1 = new javax.swing.JToggleButton();
-        doneButton2 = new javax.swing.JButton();
+        testingBrowseBtn = new javax.swing.JToggleButton();
+        forecastBtn = new javax.swing.JButton();
         jScrollPane1 = new JScrollPane()
         {
             protected void paintComponent(Graphics g)
@@ -969,13 +978,18 @@ public class MainUI extends javax.swing.JFrame {
         jTabbedPane1.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
         jTabbedPane1.setOpaque(true);
 
+        jPanel3.setBackground(new java.awt.Color(255, 204, 0));
         jPanel3.setForeground(new java.awt.Color(255, 255, 255));
 
+        jPanel14.setBackground(new java.awt.Color(56, 56, 56, 30));
+        jPanel14.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel14.setOpaque(false);
+
         jTextArea1.setEditable(false);
-        jTextArea1.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jTextArea1.setBackground(new java.awt.Color(255, 255, 255, 220));
         jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
-        jTextArea1.setForeground(new java.awt.Color(0, 255, 255));
+        jTextArea1.setFont(new java.awt.Font("SansSerif", 0, 30)); // NOI18N
+        jTextArea1.setForeground(new java.awt.Color(51, 51, 51));
         jTextArea1.setRows(5);
         jTextArea1.setText("Forecasting Foreign Exchange Rate Using Neural Network");
         jTextArea1.setAlignmentX(2.0F);
@@ -983,10 +997,9 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea1.setAutoscrolls(false);
         jTextArea1.setCaretColor(new java.awt.Color(204, 255, 102));
         jTextArea1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jTextArea1.setDisabledTextColor(new java.awt.Color(0, 255, 255));
+        jTextArea1.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         jTextArea1.setEnabled(false);
         jTextArea1.setFocusable(false);
-        jTextArea1.setHighlighter(null);
         jTextArea1.setMargin(new java.awt.Insets(10, 10, 10, 10));
         jTextArea1.setOpaque(false);
         jTextArea1.setRequestFocusEnabled(false);
@@ -997,16 +1010,16 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea1.setVerifyInputWhenFocusTarget(false);
 
         jTextArea2.setEditable(false);
-        jTextArea2.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jTextArea2.setBackground(new java.awt.Color(255, 255, 255, 220));
         jTextArea2.setColumns(20);
-        jTextArea2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextArea2.setForeground(new java.awt.Color(255, 255, 255));
+        jTextArea2.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
+        jTextArea2.setForeground(new java.awt.Color(51, 51, 51));
         jTextArea2.setRows(5);
         jTextArea2.setText("Currency exchange is the trading of one currency against another.\nExample:\nBusiness Typically have to deal with currency exchange when they conduct trade outside their home country.\nInvestors, commercial and investment banks also participate in the currency market, as well as government \nand central bank when they try to adjust economic imbalances.\nCurrency exchange rate are always quoted for a currency pair using ISO code abbreviations. For example, INR/USD.\nIn terms of trading volume, Forex is the world’s largest market.\n\n");
         jTextArea2.setAlignmentX(2.0F);
         jTextArea2.setAlignmentY(2.0F);
         jTextArea2.setAutoscrolls(false);
-        jTextArea2.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jTextArea2.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         jTextArea2.setEnabled(false);
         jTextArea2.setFocusable(false);
         jTextArea2.setMargin(new java.awt.Insets(10, 10, 10, 10));
@@ -1014,11 +1027,12 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea2.setRequestFocusEnabled(false);
         jTextArea2.setVerifyInputWhenFocusTarget(false);
 
-        jPanel4.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255, 220));
+        jPanel4.setForeground(new java.awt.Color(255, 255, 255));
         jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel4.setInheritsPopupMenu(true);
         jPanel4.setOpaque(false);
+        jPanel4.setPreferredSize(new java.awt.Dimension(400, 58));
         jPanel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jPanel4MouseClicked(evt);
@@ -1032,7 +1046,7 @@ public class MainUI extends javax.swing.JFrame {
         });
 
         jTextArea4.setEditable(false);
-        jTextArea4.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jTextArea4.setBackground(new java.awt.Color(255, 255, 255, 180));
         jTextArea4.setColumns(20);
         jTextArea4.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         jTextArea4.setForeground(new java.awt.Color(255, 255, 255));
@@ -1042,7 +1056,7 @@ public class MainUI extends javax.swing.JFrame {
         jTextArea4.setAlignmentY(2.0F);
         jTextArea4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jTextArea4.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
-        jTextArea4.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jTextArea4.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         jTextArea4.setEnabled(false);
         jTextArea4.setFocusable(false);
         jTextArea4.setOpaque(false);
@@ -1062,10 +1076,10 @@ public class MainUI extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(160, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(175, 175, 175)
                 .addComponent(jTextArea4, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(113, 113, 113))
+                .addContainerGap(114, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1075,11 +1089,11 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
-        jPanel6.setBackground(new java.awt.Color(56, 56, 56, 180));
-        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255, 220));
         jPanel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel6.setInheritsPopupMenu(true);
         jPanel6.setOpaque(false);
+        jPanel6.setPreferredSize(new java.awt.Dimension(400, 58));
         jPanel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jPanel6MouseClicked(evt);
@@ -1093,17 +1107,17 @@ public class MainUI extends javax.swing.JFrame {
         });
 
         jTextArea5.setEditable(false);
-        jTextArea5.setBackground(new java.awt.Color(56, 56, 56, 180));
+        jTextArea5.setBackground(new java.awt.Color(255, 255, 255, 180));
         jTextArea5.setColumns(20);
         jTextArea5.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        jTextArea5.setForeground(new java.awt.Color(255, 255, 255));
+        jTextArea5.setForeground(new java.awt.Color(51, 51, 51));
         jTextArea5.setRows(5);
         jTextArea5.setText("Recurrent Neural Network");
         jTextArea5.setAlignmentX(2.0F);
         jTextArea5.setAlignmentY(2.0F);
         jTextArea5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jTextArea5.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
-        jTextArea5.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jTextArea5.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         jTextArea5.setEnabled(false);
         jTextArea5.setFocusable(false);
         jTextArea5.setOpaque(false);
@@ -1124,7 +1138,7 @@ public class MainUI extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(160, Short.MAX_VALUE)
+                .addContainerGap(181, Short.MAX_VALUE)
                 .addComponent(jTextArea5, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(113, 113, 113))
         );
@@ -1136,30 +1150,48 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
                 .addGap(170, 170, 170)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 1040, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 1040, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextArea1)
+                    .addGroup(jPanel14Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextArea2))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
                 .addGap(120, 120, 120)
                 .addComponent(jTextArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
                 .addComponent(jTextArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(3, 3, 3)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(45, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1371, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 586, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("          Home          ", jPanel3);
@@ -1176,7 +1208,6 @@ public class MainUI extends javax.swing.JFrame {
         CurrencyComboBox.setBackground(new java.awt.Color(56, 56, 56, 0));
         CurrencyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "US Dollar", "British Pound", "Euro", "Yen" }));
         CurrencyComboBox.setAlignmentX(2.0F);
-        CurrencyComboBox.setBorder(null);
         CurrencyComboBox.setOpaque(false);
 
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
@@ -1201,18 +1232,18 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
 
-        jToggleButton1.setText("Browse");
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        testingBrowseBtn.setText("Browse");
+        testingBrowseBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                testingBrowseBtnActionPerformed(evt);
             }
         });
 
-        doneButton2.setText("Forecast");
-        doneButton2.setOpaque(false);
-        doneButton2.addActionListener(new java.awt.event.ActionListener() {
+        forecastBtn.setText("Forecast");
+        forecastBtn.setOpaque(false);
+        forecastBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                doneButton2ActionPerformed(evt);
+                forecastBtnActionPerformed(evt);
             }
         });
 
@@ -1230,9 +1261,9 @@ public class MainUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(testingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton1)
+                .addComponent(testingBrowseBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(doneButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(forecastBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
         );
         jPanel10Layout.setVerticalGroup(
@@ -1244,8 +1275,8 @@ public class MainUI extends javax.swing.JFrame {
                     .addComponent(CurrencyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(testingDataPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton1)
-                    .addComponent(doneButton2))
+                    .addComponent(testingBrowseBtn)
+                    .addComponent(forecastBtn))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -1320,7 +1351,6 @@ public class MainUI extends javax.swing.JFrame {
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setForeground(new java.awt.Color(255, 255, 255));
         jRadioButton2.setText("Recurrent Neural Network");
-        jRadioButton2.setBorder(null);
         jRadioButton2.setContentAreaFilled(false);
         jRadioButton2.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1333,7 +1363,6 @@ public class MainUI extends javax.swing.JFrame {
         jRadioButton1.setForeground(new java.awt.Color(255, 255, 255));
         jRadioButton1.setSelected(true);
         jRadioButton1.setText("Feed Forward Neural Network");
-        jRadioButton1.setBorder(null);
         jRadioButton1.setContentAreaFilled(false);
         jRadioButton1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1425,7 +1454,7 @@ public class MainUI extends javax.swing.JFrame {
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(289, Short.MAX_VALUE))
+                .addContainerGap(273, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1462,17 +1491,17 @@ public class MainUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1360, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1371, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+    private void testingBrowseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testingBrowseBtnActionPerformed
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
@@ -1480,13 +1509,13 @@ public class MainUI extends javax.swing.JFrame {
         } else {
             System.out.println("File access cancelled by user.");
         }
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
+    }//GEN-LAST:event_testingBrowseBtnActionPerformed
 
     private void doneButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButton1ActionPerformed
         
     }//GEN-LAST:event_doneButton1ActionPerformed
 
-    private void doneButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneButton2ActionPerformed
+    private void forecastBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastBtnActionPerformed
         
         if(algo == 1){
             startFForecast();
@@ -1494,7 +1523,7 @@ public class MainUI extends javax.swing.JFrame {
             startRForecast();
         }
         
-    }//GEN-LAST:event_doneButton2ActionPerformed
+    }//GEN-LAST:event_forecastBtnActionPerformed
 
     private void startFForecast(){
         
@@ -1895,65 +1924,77 @@ public class MainUI extends javax.swing.JFrame {
         testingDataPath.selectAll();
     }//GEN-LAST:event_testingDataPathFocusGained
 
-    private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
-        buttonGroup1.setSelected(jRadioButton1.getModel(), true);
-        algo = 1;
-        jTabbedPane1.setSelectedIndex(1);
-    }//GEN-LAST:event_jPanel4MouseClicked
-
-    private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
-        buttonGroup1.setSelected(jRadioButton2.getModel(), true);
-        algo = 2;
-        jTabbedPane1.setSelectedIndex(1);
-    }//GEN-LAST:event_jPanel6MouseClicked
-
-    private void jTextArea4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseClicked
-        buttonGroup1.setSelected(jRadioButton1.getModel(), true);
-        algo = 1;
-        jTabbedPane1.setSelectedIndex(1);
-    }//GEN-LAST:event_jTextArea4MouseClicked
-
-    private void jTextArea5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseClicked
-        buttonGroup1.setSelected(jRadioButton2.getModel(), true);
-        algo = 2;
-        jTabbedPane1.setSelectedIndex(1);
-    }//GEN-LAST:event_jTextArea5MouseClicked
-
-    private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
-        jPanel4.setBackground(new java.awt.Color(56,56,56,210));
-    }//GEN-LAST:event_jPanel4MouseEntered
-
-    private void jPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseExited
-        jPanel4.setBackground(new java.awt.Color(56,56,56,180));
-    }//GEN-LAST:event_jPanel4MouseExited
-
-    private void jTextArea4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseEntered
-        jPanel4.setBackground(new java.awt.Color(56,56,56,210));
-    }//GEN-LAST:event_jTextArea4MouseEntered
-
-    private void jTextArea4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseExited
-        jPanel4.setBackground(new java.awt.Color(56,56,56,180));
-    }//GEN-LAST:event_jTextArea4MouseExited
-
-    private void jPanel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseEntered
-        jPanel6.setBackground(new java.awt.Color(56,56,56,210));
-    }//GEN-LAST:event_jPanel6MouseEntered
-
-    private void jTextArea5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseEntered
-        jPanel6.setBackground(new java.awt.Color(56,56,56,210));
-    }//GEN-LAST:event_jTextArea5MouseEntered
-
-    private void jPanel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseExited
-        jPanel6.setBackground(new java.awt.Color(56,56,56,180));
-    }//GEN-LAST:event_jPanel6MouseExited
-
-    private void jTextArea5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseExited
-        jPanel6.setBackground(new java.awt.Color(56,56,56,180));
-    }//GEN-LAST:event_jTextArea5MouseExited
-
     private void forecastTableFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_forecastTableFocusLost
         forecastTable.getSelectionModel().clearSelection();
     }//GEN-LAST:event_forecastTableFocusLost
+
+    private void jPanel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseExited
+         jPanel6.setBackground(new java.awt.Color(255, 255, 255, 220));
+        jTextArea5.setDisabledTextColor(new java.awt.Color(51, 51, 51));
+    }//GEN-LAST:event_jPanel6MouseExited
+
+    private void jPanel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseEntered
+              jPanel6.setBackground(new java.awt.Color(0,145,234,220));
+              jTextArea5.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+    }//GEN-LAST:event_jPanel6MouseEntered
+
+    private void jPanel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel6MouseClicked
+         jTabbedPane1.setSelectedIndex(1);
+        algo = 2;
+        jRadioButton2.setSelected(true);
+    }//GEN-LAST:event_jPanel6MouseClicked
+
+    private void jTextArea5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseExited
+          jPanel6.setBackground(new java.awt.Color(255, 255, 255, 220));
+        jTextArea5.setDisabledTextColor(new java.awt.Color(51, 51, 51));
+    }//GEN-LAST:event_jTextArea5MouseExited
+
+    private void jTextArea5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseEntered
+           jPanel6.setBackground(new java.awt.Color(0,145,234,220));
+              jTextArea5.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+    }//GEN-LAST:event_jTextArea5MouseEntered
+
+    private void jTextArea5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea5MouseClicked
+        jTabbedPane1.setSelectedIndex(1);
+        algo = 2;
+        jRadioButton2.setSelected(true);
+    }//GEN-LAST:event_jTextArea5MouseClicked
+
+    private void jPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseExited
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255, 220));
+        jTextArea4.setDisabledTextColor(new java.awt.Color(51, 51, 51));
+
+    }//GEN-LAST:event_jPanel4MouseExited
+
+    private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
+       jPanel4.setBackground(new java.awt.Color(0,145,234,220));
+       jTextArea4.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+
+    }//GEN-LAST:event_jPanel4MouseEntered
+
+    private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
+        jTabbedPane1.setSelectedIndex(1);
+        algo = 1;
+        jRadioButton1.setSelected(true);
+    }//GEN-LAST:event_jPanel4MouseClicked
+
+    private void jTextArea4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseExited
+         jPanel4.setBackground(new java.awt.Color(255, 255, 255, 220));
+        jTextArea4.setDisabledTextColor(new java.awt.Color(51, 51, 51));
+
+
+    }//GEN-LAST:event_jTextArea4MouseExited
+
+    private void jTextArea4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseEntered
+        jPanel4.setBackground(new java.awt.Color(0,145,234,220));
+        jTextArea4.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+    }//GEN-LAST:event_jTextArea4MouseEntered
+
+    private void jTextArea4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea4MouseClicked
+         jTabbedPane1.setSelectedIndex(1);
+        algo = 1;
+        jRadioButton1.setSelected(true);
+    }//GEN-LAST:event_jTextArea4MouseClicked
 
     private FocusListener fcsListener = new FocusListener() {
         @Override
@@ -2015,7 +2056,9 @@ public class MainUI extends javax.swing.JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 MainUI frame = new MainUI();
-                frame.setVisible(true);                
+                frame.setVisible(true); 
+              //  ApiCaller task = new ApiCaller();
+               // task.execute();
             }
         });
     }
@@ -2041,13 +2084,13 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> CurrencyComboBox;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton doneButton1;
-    private javax.swing.JButton doneButton2;
     private javax.swing.JSpinner epochInput;
     private javax.swing.JComboBox<String> fCurrencyComboBox;
     private javax.swing.JSpinner fOutputNeurons;
     private javax.swing.JFileChooser fileChooser;
     private java.awt.TextField filePath;
     private javax.swing.JButton finishBtn;
+    private javax.swing.JButton forecastBtn;
     private javax.swing.JTable forecastTable;
     private javax.swing.JSpinner hiddenNeurons;
     private javax.swing.JSpinner inputNeurons;
@@ -2084,6 +2127,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -2102,7 +2146,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JComboBox<String> rCurrencyComboBox;
     private java.awt.TextField rFilePath;
     private javax.swing.JButton rFinishBtn;
@@ -2116,6 +2159,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JButton submitBtn;
     private javax.swing.JLabel testLabel;
     private javax.swing.JLabel testLabel1;
+    private javax.swing.JToggleButton testingBrowseBtn;
     private javax.swing.JTextField testingDataPath;
     // End of variables declaration//GEN-END:variables
 }
