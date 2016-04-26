@@ -62,10 +62,12 @@ import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 import neuralNetwork.Utility;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import recurrent.RForecast;
 import recurrent.RecurrentData;
 import recurrent.RecurrentTrain;
-//import restApi.ApiCaller;
+import restApi.ApiCaller;
 
 
 /*
@@ -369,6 +371,7 @@ public class MainUI extends javax.swing.JFrame {
             }
         };
         doneButton1 = new javax.swing.JButton();
+        graphBtn = new javax.swing.JButton();
 
         fileChooser.setFileFilter(new MyCustomFilter());
 
@@ -1441,6 +1444,14 @@ public class MainUI extends javax.swing.JFrame {
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
+        graphBtn.setText("Plot Graph");
+        graphBtn.setOpaque(false);
+        graphBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -1454,19 +1465,24 @@ public class MainUI extends javax.swing.JFrame {
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(273, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(graphBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(156, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(graphBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(36, 36, 36))
         );
 
@@ -1996,6 +2012,50 @@ public class MainUI extends javax.swing.JFrame {
         jRadioButton1.setSelected(true);
     }//GEN-LAST:event_jTextArea4MouseClicked
 
+    private void graphBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphBtnActionPerformed
+        int i = forecastTable.getRowCount();
+        int l=0,h=0;
+        if(i>30 )
+        {
+            String[] args = null;
+            //        args[0] = (String)CurrencyComboBox.getSelectedItem();
+            XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+            XYSeries dataset1 = new XYSeries("expected");
+            XYSeries dataset2 = new XYSeries("actual");
+            for(int j=0;j<i;j++)
+            {
+                double f = Double.parseDouble((String)forecastTable.getValueAt(j, 2));
+                double g = Double.parseDouble((String)forecastTable.getValueAt(j, 3));
+                dataset1.add(j+1,f);
+                dataset2.add(j+1,g);
+            }
+            xySeriesCollection.addSeries(dataset1);
+            xySeriesCollection.addSeries(dataset2);
+            switch(CurrencyComboBox.getSelectedIndex())
+            {
+                case 0: l=60 ;
+                h=68 ;
+                break;
+                case 1: l=90 ;
+                h=105 ;
+                break;
+                case 2: l=65 ;
+                h=78 ;
+                break;
+                case 3: l=50 ;
+                h=56 ;
+                break;
+            }
+            LineChart.main(args, xySeriesCollection,l,h);
+        }
+        else
+        {
+            String msg = "Forecast Exchange Rate First!!";
+            JOptionPane.showMessageDialog(Utility.getActiveFrame(),
+                msg, "Error", JOptionPane.WARNING_MESSAGE);
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_graphBtnActionPerformed
+
     private FocusListener fcsListener = new FocusListener() {
         @Override
         public void focusGained(FocusEvent e) {
@@ -2057,8 +2117,8 @@ public class MainUI extends javax.swing.JFrame {
             public void run() {
                 MainUI frame = new MainUI();
                 frame.setVisible(true); 
-              //  ApiCaller task = new ApiCaller();
-               // task.execute();
+                ApiCaller task = new ApiCaller();
+                task.execute();
             }
         });
     }
@@ -2092,6 +2152,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JButton finishBtn;
     private javax.swing.JButton forecastBtn;
     private javax.swing.JTable forecastTable;
+    private javax.swing.JButton graphBtn;
     private javax.swing.JSpinner hiddenNeurons;
     private javax.swing.JSpinner inputNeurons;
     private javax.swing.JButton jButton4;
