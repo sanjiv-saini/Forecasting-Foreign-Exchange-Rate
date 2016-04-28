@@ -853,7 +853,7 @@ public class MainUI extends javax.swing.JFrame {
         jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel17.setForeground(new java.awt.Color(255, 255, 255));
         jLabel17.setLabelFor(fCurrencyComboBox);
-        jLabel17.setText("Select Currency                                         :");
+        jLabel17.setText("Select Currency                                        :");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(240, 240, 240));
@@ -1008,30 +1008,34 @@ public class MainUI extends javax.swing.JFrame {
                 .addGap(49, 49, 49))
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(63, 63, 63)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel31)
-                                .addGap(82, 82, 82)
-                                .addComponent(jLabel14))
-                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(fCurrencyComboBox, 0, 137, Short.MAX_VALUE)
-                            .addComponent(epochInput)))
-                    .addComponent(jLabel6)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(filePath, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(submitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(submitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(finishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(finishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jLabel31)
+                                    .addGap(82, 82, 82)
+                                    .addComponent(jLabel14))
+                                .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(fCurrencyComboBox, 0, 137, Short.MAX_VALUE)
+                                .addComponent(epochInput)))
+                        .addGroup(jPanel5Layout.createSequentialGroup()
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(filePath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(43, Short.MAX_VALUE))
         );
@@ -1045,13 +1049,13 @@ public class MainUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(epochInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(epochInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(jPanel5Layout.createSequentialGroup()
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(3, 3, 3)))
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel31, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)))
+                    .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -2552,6 +2556,9 @@ public class MainUI extends javax.swing.JFrame {
 
     private void forecastBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastBtnActionPerformed
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        DefaultTableModel dtm = (DefaultTableModel) forecastTable.getModel();
+        dtm.setRowCount(0);
+        dtm.setRowCount(4);
         
         if(algo == 1){
             startFForecast();
@@ -2829,10 +2836,15 @@ public class MainUI extends javax.swing.JFrame {
    
     private void doneButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_doneButton1MouseClicked
         // TODO add your handling code here:
-        if(algo == 1)
+        if(algo == 1){
+            jFrame1.pack();
             jFrame1.setVisible(true);
-        else if(algo == 2)
+        }
+        else if(algo == 2){
+            jFrame2.pack();
             jFrame2.setVisible(true);
+        }
+           
             
     }//GEN-LAST:event_doneButton1MouseClicked
 
@@ -2990,17 +3002,17 @@ public class MainUI extends javax.swing.JFrame {
             xySeriesCollection.addSeries(dataset2);
             switch(CurrencyComboBox.getSelectedIndex())
             {
-                case 0: l=60 ;
-                h=68 ;
+                case 0: l=45 ;
+                h=75 ;
                 break;
-                case 1: l=90 ;
-                h=105 ;
+                case 1: l=70 ;
+                h=110 ;
                 break;
-                case 2: l=65 ;
-                h=78 ;
+                case 2: l=60 ;
+                h=100 ;
                 break;
-                case 3: l=50 ;
-                h=56 ;
+                case 3: l=40 ;
+                h=80 ;
                 break;
             }
             LineChart.main(args, xySeriesCollection,l,h);

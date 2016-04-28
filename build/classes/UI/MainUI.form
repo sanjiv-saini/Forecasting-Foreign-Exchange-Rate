@@ -71,35 +71,41 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jProgressBar1" max="32767" attributes="0"/>
-                          <Component id="jPanel9" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jLabel31" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
-                                      <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="jLabel17" max="32767" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="fCurrencyComboBox" pref="137" max="32767" attributes="0"/>
-                                  <Component id="epochInput" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="filePath" min="-2" pref="349" max="-2" attributes="0"/>
-                                  <Component id="submitBtn" min="-2" pref="95" max="-2" attributes="0"/>
-                              </Group>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="submitBtn" min="-2" pref="95" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="finishBtn" min="-2" pref="95" max="-2" attributes="0"/>
+                              <Component id="finishBtn" min="-2" pref="95" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jProgressBar1" max="32767" attributes="0"/>
+                              <Component id="jPanel9" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="jLabel31" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+                                          <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="jLabel17" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="fCurrencyComboBox" pref="137" max="32767" attributes="0"/>
+                                      <Component id="epochInput" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      </Group>
+                                      <Component id="filePath" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jButton4" min="-2" pref="95" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -119,16 +125,16 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="epochInput" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="epochInput" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel14" alignment="3" max="32767" attributes="0"/>
+                              </Group>
                               <Group type="102" attributes="0">
                                   <Component id="jLabel1" min="-2" pref="20" max="-2" attributes="0"/>
                                   <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="jLabel14" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jLabel31" alignment="0" pref="20" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jLabel31" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
@@ -215,7 +221,7 @@
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                   <ComponentRef name="fCurrencyComboBox"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Select Currency                                         :"/>
+                <Property name="text" type="java.lang.String" value="Select Currency                                        :"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
