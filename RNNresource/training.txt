@@ -40,3 +40,15 @@ Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
 EPOCH: 700
 Sum of squared errors = 746.8178480582218
 
+Currency: Yen
+PATTERN: 1 1 1 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 500
+Sum of squared errors = 7789.044298337379
+
+Currency: Yen
+PATTERN: 20 12 12 1
+Learning Rate: 0.30000001192092896  Momentum: 0.800000011920929
+EPOCH: 700
+Sum of squared errors = 524.6292941241329
+

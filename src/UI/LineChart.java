@@ -1,6 +1,8 @@
 package UI;
 
+import static UI.MainUI.setUIFont;
 import java.awt.Color;
+import java.awt.Font;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -21,7 +23,9 @@ public class LineChart extends javax.swing.JFrame
     public LineChart()
     {
         super("");
+        setUIFont (new javax.swing.plaf.FontUIResource("Segoe UI",Font.PLAIN,13));
     }
+    
    void createChart( String applicationTitle , String chartTitle , XYDataset dataset, int l, int h  )
    {
       JFreeChart lineChart = ChartFactory.createXYLineChart(
@@ -35,7 +39,7 @@ public class LineChart extends javax.swing.JFrame
       ValueAxis axis = plot.getRangeAxis();
       axis.setUpperBound(h);
       axis.setLowerBound(l);
-      chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
+      chartPanel.setPreferredSize( new java.awt.Dimension( 1120 , 580 ) );
       setContentPane( chartPanel );
    }
 
@@ -46,6 +50,9 @@ public class LineChart extends javax.swing.JFrame
       
  //     String a = args[0].concat("/INR");
       LineChart chart = new LineChart();
+      chart.setIconImage(MainUI.iconImage);
+      chart.setTitle("Graph");
+      chart.setBackground(new java.awt.Color(102, 102, 102));
       chart.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
       chart.createChart("","", dataset,l,h);
       chart.pack( );
