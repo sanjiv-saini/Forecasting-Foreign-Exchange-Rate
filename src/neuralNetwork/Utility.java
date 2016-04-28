@@ -84,7 +84,7 @@ public class Utility {
     }
     
     public static String formatDecimal(Double num){
-        DecimalFormat df = new DecimalFormat("#.0#");
+        DecimalFormat df = new DecimalFormat("0.0000");
         return df.format(num);
     }
     

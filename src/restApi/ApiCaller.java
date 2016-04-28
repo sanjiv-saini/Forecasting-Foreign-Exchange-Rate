@@ -5,6 +5,7 @@
  */
 package restApi;
 
+import UI.MainUI;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFormattedTextField;
+import javax.swing.SwingUtilities;
 import static org.apache.http.HttpHeaders.USER_AGENT;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,18 +33,23 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class ApiCaller extends SwingWorker<Object, Void>{
     
-    String builtUrl;
-    String jsonStr;
+    private String builtUrl;
+    private String jsonStr;
+    private MainUI context;
+    
+    private String baseUrl = "https://query.yahooapis.com/v1/public/yql?";
+    private String q = "select * from yahoo.finance.xchange where pair in (\"USDINR\",\"GBPINR\",\"EURINR\",\"JPYINR\")";
+    private String diagnostics = "true";
+    private String env = "store://datatables.org/alltableswithkeys";
+    private String format = "json";
+    
+    public ApiCaller(MainUI context){
+        this.context = context;
+    }
     
     @Override
     protected Void doInBackground() throws IOException{
 
-            String baseUrl = "https://query.yahooapis.com/v1/public/yql?";
-            String q = "select * from yahoo.finance.xchange where pair in (\"EURINR\")";
-            String diagnostics = "true";
-            String env = "store://datatables.org/alltableswithkeys";
-            String format = "json";
-            
             List<NameValuePair> params = new LinkedList<NameValuePair>();
             
             params.add(new BasicNameValuePair("q", q));
@@ -82,10 +90,17 @@ public class ApiCaller extends SwingWorker<Object, Void>{
     public void done() {
         try {
             get();
+            System.out.println("\n" + builtUrl + "\n\n" + jsonStr);   
+            String[] rate =  new JsonDataParser().parseXRate(jsonStr);
+
+            context.showTodayRate(rate);
+            context.calcForecast(rate);
+            
         } catch (InterruptedException | ExecutionException ex) {
+            context.showNetworkError();
             Logger.getLogger(ApiCaller.class.getName()).log(Level.SEVERE, null, ex);
         }
-               System.out.println("\n" + builtUrl + "\n\n" + jsonStr);      
+                  
 
     }
     
